@@ -396,3 +396,7 @@ mdb:
 medium_zoom:
   version: "1.0.8"
   integrity: "sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8="
+
+external_sources:
+  - name: medium.com  # name of the source (arbitrary string)
+    rss_url: https://medium.com/@taiyu_chen/feed
