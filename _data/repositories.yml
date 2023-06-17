@@ -1,12 +1,5 @@
 github_users:
-  - torvalds
-  - alshedivat
+  - prince-of-tennis
 
 github_repos:
-  - alshedivat/al-folio
-  - twbs/bootstrap
-  - jekyll/jekyll
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - jpswalsh/academicons
-  - mathjax/MathJax
+  - prince-of-tennis/cisco-share-resources
