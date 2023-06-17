@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  a post with images
-date: 2015-05-15 21:01:00
-description: this is what included images could look like
-tags: formatting images
-categories: sample-posts
-thumbnail: assets/img/9.jpg
+title:  shortcuts I use
+date: 2023-6-17 14:19:00
+description: list of shortcuts I like
+tags: workflow
+categories: 
+thumbnail: 
 ---
 
 I'm somewhat obsessed with using shortcuts for everything I use often. Here's my current list:
