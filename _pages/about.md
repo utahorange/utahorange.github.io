@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: Watch the packets flow like water; In and out they go; One must learn to guide their way
 
 profile:
   align: right
@@ -16,4 +16,4 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hello, I'm currently a high school student planning on studying information security in college. 
+Hello, I'm a high school student planning on studying information security in college. 
