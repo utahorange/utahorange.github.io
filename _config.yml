@@ -102,8 +102,8 @@ facebook_id: # your facebook id
 youtube_id: # your youtube channel id (youtube.com/@<youtube_id>)
 discord_id: # your discord id (18-digit unique numerical identifier)
 
-contact_note: >
-  Fastest way to reach me is through email. I'm usually good with responding within 1-2 business days.
+contact_note:
+  
 
 # -----------------------------------------------------------------------------
 # Analytics and search engine verification
