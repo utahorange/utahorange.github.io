@@ -52,6 +52,8 @@ I'm somewhat obsessed with using shortcuts for everything I use often. Here's my
 
 ## ubuntu/arch linux terminal
 - search command history: Ctrl+R
+- jump to beginning of terminal: Ctrl+A
+- jump to end of terminal: Ctrl+E
 - autocomplete command if unique: Tab
 
 ## vscode
