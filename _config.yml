@@ -13,7 +13,7 @@ footer_text: >
 keywords: 
 
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
-icon: /assets/img/icon.png  # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
+icon: icon.png  # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 
 url: https://prince-of-tennis.github.io # the base hostname & protocol for your site
 baseurl: # the subpath of your site, e.g. /blog/
@@ -267,8 +267,8 @@ display_tags: ['workflow','math','cisco'] # these tags will be displayed on the 
 
 scholar:
 
-  last_name: [Einstein]
-  first_name: [Albert, A.]
+  last_name: [Chen]
+  first_name: [Tai-Yu, T.]
 
   style: apa
   locale: en
