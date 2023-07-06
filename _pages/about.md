@@ -18,4 +18,4 @@ social: true  # includes social icons at the bottom of the page
 
 Hello, I'm a high school student interested in information security. In my free time, I like to run, draw, and journal.
 
-*The Prince of Tennis* happens to be a mediocre but beloved anime that I find hilarious. It says nothing about my tennis abilities.
+*The Prince of Tennis* happens to be a mediocre but beloved anime. It says nothing about my tennis abilities.
