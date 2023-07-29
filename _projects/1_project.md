@@ -21,3 +21,5 @@ Here is a collection of Cisco Packet Tracer labs I created.
         {% include figure.html path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
+
+<a href="assets/img/5.jpg" target="_blank"><img src="assets/img/1.jpg" width="300" height="225" alt="img test" /></a>
