@@ -22,4 +22,4 @@ Here is a collection of Cisco Packet Tracer labs I created.
     </div>
 </div>
 
-<a href="assets/img/5.jpg" target="_blank"><img src="assets/img/1.jpg" width="300" height="225" alt="img test" /></a>
+<a href="/assets/img/5.jpg" target="_blank"><img src="/assets/img/1.jpg" width="300" height="225" alt="img test" /></a>
