@@ -2,13 +2,13 @@
 layout: post
 title:  shortcuts I use
 date: 2023-6-17 14:19:00
-description: list of shortcuts I like
+description:
 tags: workflow
 categories: 
 thumbnail: 
 ---
 
-I'm somewhat obsessed with using shortcuts for everything I use often. Here's my current list:
+I'm somewhat obsessed with using shortcuts for everything I use. Here's my list:
 
 ## Windows
 - max/min window: WIN+Up/down arrow

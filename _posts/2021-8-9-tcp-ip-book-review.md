@@ -2,7 +2,7 @@
 layout: post
 title: Review of TCP/IP for Dummies
 date: 2021-8-9 14:19:00
-description: archive of a post I wrote in 2021, edited for grammar-ish
+description: archive of a post I wrote in 2021
 tags: networking
 categories: 
 thumbnail: 
