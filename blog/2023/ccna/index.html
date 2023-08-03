@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>networking | Tai-Yu  Chen</title>
+    <title>Passing CCNA | Tai-Yu  Chen</title>
     <meta name="author" content="Tai-Yu  Chen">
     <meta name="description" content="Tai-Yu Chen's website
 ">
@@ -38,7 +38,7 @@
     <link rel="shortcut icon" href="/assets/img/icon.png">
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://prince-of-tennis.github.io/blog/tag/networking/">
+    <link rel="canonical" href="https://prince-of-tennis.github.io/blog/2023/ccna/">
 
     <!-- Dark Mode -->
     
@@ -113,34 +113,140 @@
     <!-- Content -->
     <div class="container mt-5">
       
-        <div class="post">
+        <!-- _layouts/post.html -->
+
+<div class="post">
 
   <header class="post-header">
-    <h1 class="post-title"> <i class="fas fa-hashtag fa-sm"></i> networking </h1>
-    <p class="post-description"> an archive of posts with this tag </p>
+    <h1 class="post-title">Passing CCNA</h1>
+    <p class="post-meta">August 1, 2023</p>
+    <p class="post-tags">
+      <a href="/blog/2023"> <i class="fas fa-calendar fa-sm"></i> 2023 </a>
+        ·  
+        <a href="/blog/tag/networking">
+          <i class="fas fa-hashtag fa-sm"></i> networking</a>  
+          
+
+    </p>
   </header>
 
-  <article>
-    <div class="table-responsive">
-      <table class="table table-sm table-borderless">
-        
-        <tr>
-          <th scope="row">Aug 1, 2023</th>
-          <td>
-              <a class="post-link" href="/blog/2023/ccna/">Passing CCNA</a>
-          </td>
-        </tr>
-      
-        <tr>
-          <th scope="row">Aug 9, 2021</th>
-          <td>
-              <a class="post-link" href="/blog/2021/tcp-ip-book-review/">Review of TCP/IP for Dummies</a>
-          </td>
-        </tr>
-      
-      </table>
+  <article class="post-content">
+    
+    <div id="markdown-content">
+      <p>Earlier this week I passed the CCNA 200-301 exam. I don’t feel like I have much to contribute on this particular exam, because most of the skills and knowledge related to this exam I acquired passively in 3 years of CyberPatriot Nationals preparation.</p>
+
+<p>On the other hand, for those who are in a similar situation, you may be interested in getting the CCNA to validate your years of labor with a certification.</p>
+
+<p>If you want to immediately get started, jump to <a href="##%20Checklist">here</a></p>
+
+<h2 id="about-the-examcertification">About the Exam/Certification</h2>
+<p>CCNA stands for Cisco Certified Network Associate. It’s not the highest-level Cisco certification you can get (that would be CCNP). It is technically entry-level, but it is not the most entry-level networking certification you can get.</p>
+
+<h2 id="my-experience">My Experience</h2>
+<p>I tested at the same testing center as I did for the <a href="https://medium.com/@taiyu_chen/guaranteed-pass-comptia-security-3bdefee9f319" rel="external nofollow noopener" target="_blank">Security Plus</a> certification. This time, there were a few technical issues with Internet, which caused me to lose maybe 3-5 minutes of test-taking time. As I was going relatively slowly, I almost ran out of time with this exam. You are not allowed to go back to previous questions, which means that going at a fast pace does not give you any benefits.</p>
+
+<p>There were 3 simulation questions, which gave a topology, the CLI prompts of a few devices (around 3), and instructions on what to configure. I found these to be very similar to the labs offered on the CyberPatriot Netacad course, though worded differently. The topics I saw as I recall were:</p>
+<ol>
+  <li>Configure NAT, DHCP, and SSH for a certain user. You were instructed to check the configurations by looking at IP addresses and attempting SSH. The NAT part was sort of odd, because the topology was three routers and you were essentially giving private addresses to just one router port. SSH relied on DHCP properly configured. There’s a slight bug, where the router port might reassign itself a new IP from DHCP without you prompting it, which forced me to redo the DHCP pool. Also, I never got SSH working, which I have a suspicion is related to some ACLs that I did not check.</li>
+  <li>Assign VLANs to interfaces, create VLANs, and do something with Etherchannel as I recall.</li>
+  <li>Configure CDP (Cisco Discovery Protocol) and LLDP (Link Layer Discovery Protocol) per-interface. This was relatively simple. There were too many protocols to recall for this exam, so I found the start of every command for every protocol (<code class="language-plaintext highlighter-rouge">standby</code> for HSRP, <code class="language-plaintext highlighter-rouge">cdp</code> for CDP, etc) and relied on <code class="language-plaintext highlighter-rouge">?</code> during the exam.</li>
+</ol>
+
+<h2 id="checklist">Checklist</h2>
+<ol>
+  <li>Find the complete <a href="https://learningnetwork.cisco.com/s/ccna-exam-topics" rel="external nofollow noopener" target="_blank">list of topics covered on the CCNA exam</a>. Copy and paste into your notes editor of choice (I personally use <a href="https://medium.com/@taiyu_chen/using-obsidian-with-google-drive-10beca66bd29" rel="external nofollow noopener" target="_blank">Obsidian</a>). Check off topics you are already confident in.</li>
+</ol>
+
+<figure>
+
+  
+
+  <video src="/assets/video/ccna_checklist.mp4" class="img-fluid rounded z-depth-1" width="auto" height="auto" autoplay="" controls=""></video>
+
+  
+
+</figure>
+
+<ol>
+  <li>Based on how many unchecked boxes are left, estimate how much time you’ll need to study. Schedule the CCNA exam accordingly to force yourself to a schedule.
+    <blockquote>
+      <p>I rescheduled the exam twice to give myself extra time. You can reschedule for free unlimited times as long as it is 24 hours before the exam appointment.</p>
+    </blockquote>
+  </li>
+  <li>Start working through material pertinent to the topics you’ve never seen before. I especially noted vocabulary (e.g. <a href="https://www.9tut.com/puppet-tutorial" rel="external nofollow noopener" target="_blank">Ansible, Chef, and Puppet components</a>) and protocol behaviors like STP root bridge elections and OSPF convergence, which I haven’t looked at in a while. I also took note of commands that I don’t often use like in STP, LLDP, HSRP, etc. The CyberPatriot curriculum does not cover wireless networking at all, so that may be a topic of focus for you.</li>
+  <li>Do a lot of practice questions to familiarize yourself with the format. The problem with this is that practice problems tend to not revolve around reading command output, which I feel is disingenuous.</li>
+</ol>
+
+<p>My impression of the exam was that you had to be really good at subnetting fast and accurately, as well as reading the output from <code class="language-plaintext highlighter-rouge">ip route</code>.</p>
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">ip route</code> is actually way cooler than I imagined. I knew about the symbols (<code class="language-plaintext highlighter-rouge">D</code> for EIGRP) and so on, but Administrative Distance and metric are also displayed in the output for <em>each</em> route. Make sure you can subnet quickly so you can answer questions related to <strong>best path match</strong>.</p>
+</blockquote>
+
+<h2 id="strategies-for-during-the-exam">Strategies for during the Exam</h2>
+<p>You can use <code class="language-plaintext highlighter-rouge">?</code> on the simulation questions, though for me, this was not that helpful. I was used to working with Cisco Packet Tracer, which has significantly fewer options than on the testing software. Using <code class="language-plaintext highlighter-rouge">?</code> on the exam gave me way too many options to read.</p>
+
+<p>Be mindful of time. I had 89 questions for 120 minutes but I nearly ran out of time due to both technical mishaps and working too slowly.</p>
+
+<h2 id="resources">Resources</h2>
+<p>Here’s practice exams. Most of the people of reddit forums recommend paying for practice exams with Boson or something similar. I can’t really say anything to that effect, because I did not use any paid resources.</p>
+
+<ul>
+  <li>https://passemall.com/learn/test/free-ccna-practice-test/ccna-practice-test-1-6154281696624640</li>
+  <li>https://ipcisco.com/ccna-quiz-1-n458da4/</li>
+  <li>https://www.learncisco.net/tests/ccna-200-301?mode=exam</li>
+</ul>
+
+<p>Here’s some miscellaneous resources.</p>
+
+<ul>
+  <li>
+<a href="https://www.youtube.com/watch?v=H8W9oMNSuwo&amp;list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&amp;ab_channel=Jeremy%27sITLab" rel="external nofollow noopener" target="_blank">Jeremy’s video course</a> is very thorough and highly recommended though I personally did not use them.</li>
+  <li><a href="https://www.jeremysitlab.com/ccna-resource" rel="external nofollow noopener" target="_blank">More Resources</a></li>
+</ul>
+
     </div>
   </article>
+
+
+  
+    
+    <br>
+    <hr>
+    <br>
+    <ul class="list-disc pl-8"></ul>
+
+    <!-- Adds related posts to the end of an article -->
+    <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2>
+    <p class="mb-2">Here are some more articles you might like to read next:</p>
+  
+
+  <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/cisco-networking-in-cyberpatriot/">Cisco Networking in CyberPatriot</a>
+  </li>
+
+  
+
+  <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/make-your-own-packet-tracer-lab/">Make your own Packet Tracer Lab</a>
+  </li>
+
+  
+
+  <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/how-to-delete-in-packet-tracer/">How to delete in Packet Tracer</a>
+  </li>
+
+  
+
+  <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/bac-summer-academy-review/">BAC Summer Academy Review</a>
+  </li>
+
+  
+
+  <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/passing-comptia-security-fast/">Passing CompTIA Security+ Fast</a>
+  </li>
 
 </div>
 
