@@ -16,4 +16,4 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hello, I'm a high school student interested in cybersecurity. I'm Security+ and CCNA-certified. I have also been a national finalist at the [premier high school cybersecurity competition](https://www.uscyberpatriot.org/) for the past 3 years, working on making it to a fourth :)
+Hello, I'm a high school student interested in cybersecurity. I'm Security+ and CCNA-certified. I have also been a national finalist at the [premier high school cybersecurity competition](https://www.uscyberpatriot.org/) for the past 3 years, working on making it to a fourth. 

@@ -2,10 +2,10 @@
 layout: page
 title: projects
 permalink: /projects/
-description: past and current projects 
+description: past and current 
 nav: true
 nav_order: 2
-display_categories: [projects, labs, fun]
+display_categories: [projects, labs] 
 horizontal: false
 ---
 

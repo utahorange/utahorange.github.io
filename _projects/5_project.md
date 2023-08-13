@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Nationals Practice (WIP)
-description: CyberPatriot Nationals Cisco Networking Challenge Practice
+description: CyberPatriot Nationals-level Cisco 
 img: 
 importance: 1
 redirect: ../../assets/labs/CPXV_Nationals_Practice.pka 
