@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://prince-of-tennis.github.io/sitemap.xml
+Sitemap: https://utahorange.github.io/sitemap.xml
