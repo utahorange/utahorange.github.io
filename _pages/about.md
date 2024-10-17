@@ -16,4 +16,4 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hello, I'm a freshman at [UCLA](https://www.ucla.edu/) majoring in computer science and broadly interested in computer security (and anything that can possibly relate to it, like hardware security). I'm CompTIA Security+ and CCNA-certified. In my off-time I enjoy reading and rock climbing.
+Hello, I'm a freshman at [UCLA](https://www.ucla.edu/) majoring in computer science and broadly interested in computer security (especially with regards to AI or hardware). I'm CompTIA Security+ and CCNA-certified. In my off-time I enjoy reading and rock climbing.
