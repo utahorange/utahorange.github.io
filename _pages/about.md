@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: 
+subtitle: CS @ UCLA
 
 profile:
   align: right
@@ -16,4 +16,4 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hello! I’m currently studying computer science at UCLA and am broadly interested in security (and anything that can possibly relate to it, like hardware security). I’m CompTIA Security+ and CCNA-certified. In my off-time I enjoy reading and rock climbing.
+Hello! My name's Tai-Yu Chen and I’m a computer science major at UCLA. I'm broadly interested in security (and anything that can possibly relate to it, like hardware security). I’m CompTIA Security+ and CCNA-certified. In my off-time I enjoy reading and rock climbing.
