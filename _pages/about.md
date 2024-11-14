@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: CS @ UCLA
+subtitle: CS @ UCLA | SWE Intern @ Bruin AI | Prev Research @ UPenn
 
 profile:
   align: right
