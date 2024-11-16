@@ -1,11 +1,11 @@
 ---
 layout: page
-title: archive
-permalink: /archive
-description: A collection of stuff I've made or worked on in the post for your viewing pleasure.
+title: fun
+permalink: /fun
+description: random art and stuff for kicks
 nav: false
 nav_order: 3 
-display_categories: [teaching,labs] 
+display_categories: [fun] 
 horizontal: false
 ---
 
