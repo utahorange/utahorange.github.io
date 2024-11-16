@@ -3,8 +3,8 @@ layout: page
 title: fun
 permalink: /fun
 description: random art and stuff for kicks
-nav: false
-nav_order: 3 
+nav: true
+nav_order:  
 display_categories: [fun] 
 horizontal: false
 ---

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Windows Lockdown
-description: CyberPatriot Semifinals+ Cisco
+description: 
 img: 
 importance: 1
 redirect: 
