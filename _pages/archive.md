@@ -1,11 +1,11 @@
 ---
 layout: page
 title: archive
-permalink: /projects/
-description: past and current 
+permalink: /archive
+description: A collection of stuff I've made or worked on in the post for your viewing pleasure.
 nav: true
 nav_order: 2
-display_categories: [projects, labs] 
+display_categories: [teaching,labs] 
 horizontal: false
 ---
 

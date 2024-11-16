@@ -1,11 +1,11 @@
 ---
 layout: page
-title: projects
+title: Archived Projects
 permalink: /projects/
-description: past and current 
+description: 
 nav: true
 nav_order: 2
-display_categories: [projects, labs] 
+display_categories: [projects] 
 horizontal: false
 ---
 
