@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ASA Between 2 Ferns
+title: Between 2 Ferns
 description: CyberPatriot Semifinals Cisco (ASA) 
 img: 
 importance: 1
