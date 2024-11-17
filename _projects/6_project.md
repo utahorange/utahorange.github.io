@@ -1,14 +1,12 @@
 ---
 layout: page
-title: Art Archive
+title: art archive
 description: 
 img: 
 importance: 1
 redirect: 
 category: fun
 ---
-
-Here's some of the art that I feel proud enough of that I can post them here.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">

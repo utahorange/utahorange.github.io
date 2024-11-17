@@ -3,7 +3,7 @@ layout: page
 title: archive
 permalink: /archive
 description: A collection of stuff I've made or worked on in the post for your viewing pleasure.
-nav: true
+nav: false
 nav_order:  
 display_categories: [teaching,labs] 
 horizontal: false
