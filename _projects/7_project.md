@@ -1,9 +1,9 @@
 ---
 layout: page
 title: Windows Lockdown
-description: 
+description: Windows OS Hardening Script 
 img: 
 importance: 1
-redirect: 
+redirect: https://github.com/utahorange/Windows-Lockdown
 category: projects
 ---

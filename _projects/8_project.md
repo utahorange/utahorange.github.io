@@ -4,6 +4,6 @@ title: Chroma Fit
 description: a website to get your color analysis in seconds
 img: 
 importance: 1
-redirect: 
+redirect: https://github.com/utahorange/chroma-fit 
 category: projects
 ---
