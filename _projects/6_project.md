@@ -1,6 +1,6 @@
 ---
 layout: page
-title: art archive
+title: architecture
 description: 
 img: 
 importance: 1

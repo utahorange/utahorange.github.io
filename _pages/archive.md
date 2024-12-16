@@ -2,7 +2,7 @@
 layout: page
 title: archive
 permalink: /archive
-description: A collection of stuff I've made or worked on in the post for your viewing pleasure.
+description: I was an instructor specializing in Cisco Networking for 3 years in high school. Here are some of the labs and materials I made.
 nav: false
 nav_order:  
 display_categories: [teaching,labs] 
