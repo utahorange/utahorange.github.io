@@ -3,7 +3,7 @@ layout: page
 title: classes 
 permalink: /classes
 description: 
-nav: true
+nav: false
 nav_order: 5
 display_categories: 
 horizontal: false
