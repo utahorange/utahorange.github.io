@@ -16,6 +16,6 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hello! My name is Taiyu Chen and I’m a computer science major at UCLA. I'm interested in performance and security for systems. I’m CompTIA Security+ and CCNA-certified. 
+Hi, I’m a computer science major at UCLA. I'm mostly interested in performance and security for systems. I’m CompTIA Security+ and CCNA-certified. 
 
-In my off-time I enjoy reading and rock climbing.
+In my off-time I enjoy reading, watching movies, and rock climbing.
