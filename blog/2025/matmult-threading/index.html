@@ -88,6 +88,9 @@
               <li class="nav-item ">
                 <a class="nav-link" href="/projects/">projects</a>
               </li>
+              <li class="nav-item ">
+                <a class="nav-link" href="/cv/">cv</a>
+              </li>
 
               <!-- Toogle theme mode -->
               <li class="toggle-container">
@@ -133,7 +136,7 @@
   <article class="post-content">
     
     <div id="markdown-content">
-      <p>For a personal project, I’ve been digging into C++ concurrency primitives. Previously, I finished reading OSTEP and found thread synchronization really weird, but very interesting.</p>
+      <p>For a side project, I’ve been digging into C++ concurrency primitives. Previously, I finished reading OSTEP and found thread synchronization unintuitive, but very interesting.</p>
 
 <p>To learn more about how to use <code class="language-plaintext highlighter-rouge">std::thread</code>, I decided to do a performance comparison of threaded vs unthreaded matmult. Matmult (or matrix multiplication) is a very big thing nowadays and is an obviously parallelizable task. A thread to compute dot product can be dispatched for each element of the resultant matrix, since the elements of the result are not dependent on each other.</p>
 
@@ -141,7 +144,14 @@
 
 <h2 id="quick-theory-overview">quick theory overview</h2>
 
-<p>– how to multiply 2 matrices??</p>
+<p>I’ll quickly review how to multiply two matrices together to see where multi-threading comes in. The naive way to do matmults is to simply do three for-loops: two for-loops to go through every result element of the result matrix and one for-loop to go through the dot product computation row-wise on matrix A and column-wise on matrix B for the product $AB=C$. That looks like this:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+<p>To multiply two matrices together requires the number of <strong>columns</strong> of the first matrix to match the number of <strong>rows</strong> of the second. I do that check with C++’s <code class="language-plaintext highlighter-rouge">std::cassert</code> library.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
 
 <h2 id="my-thought-process-going-in">my thought process going in</h2>
 
@@ -153,9 +163,9 @@
 
 <p>A good summary of the possible performance problems with naive multithreading can be found in <a href="https://stackoverflow.com/questions/50082047/multi-threaded-matrix-multiplication-performance-issue" rel="external nofollow noopener" target="_blank">this StackOverflow post</a>.</p>
 
-<p>In reality, no one’s hand-coding implementations of matmult or whatnot by hand nowadays. Just use Python with JIT or Numba or something says very pragmatic ML researchers. And the naive triple for-loop matmult algorithm isn’t even the most efficient (in terms of Big O) algorithm around. With some <a href="https://people.csail.mit.edu/virgi/matrixmult-f.pdf" rel="external nofollow noopener" target="_blank">mysterious linear algebra</a>, you can get down to \(O(n^2.373)\) instead of \(O(n^3)\).</p>
+<p>In reality, no one’s hand-coding implementations of matmult or whatnot by hand nowadays. Just use Python with JIT or Numba or something says very pragmatic ML researchers. And the naive triple for-loop matmult algorithm isn’t even the most efficient (in terms of Big O) algorithm around. With some <a href="https://people.csail.mit.edu/virgi/matrixmult-f.pdf" rel="external nofollow noopener" target="_blank">mysterious linear algebra</a>, you can get down to \(O(n^{2.373})\) instead of \(O(n^3)\).</p>
 
-<p>My code for the threaded matmult comparisons can be found <a href="???">here</a> as well as some other concurrency practice programs I was playing with.</p>
+<p>My code for the threaded matmult comparisons can be found <a href="https://github.com/utahorange/matmult-testing" rel="external nofollow noopener" target="_blank">here</a> as well as some other concurrency practice programs I was playing with.</p>
 
     </div>
   </article>
