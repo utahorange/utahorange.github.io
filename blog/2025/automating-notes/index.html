@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>projects | Tai-Yu  Chen</title>
+    <title>Automating Notes | Tai-Yu  Chen</title>
     <meta name="author" content="Tai-Yu  Chen">
     <meta name="description" content="Tai-Yu Chen's website
 ">
@@ -38,7 +38,7 @@
     <link rel="shortcut icon" href="/assets/img/icon.png">
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://utahorange.github.io/projects/">
+    <link rel="canonical" href="https://utahorange.github.io/blog/2025/automating-notes/">
 
     <!-- Dark Mode -->
     
@@ -77,16 +77,16 @@
               </li>
               
               <!-- Blog -->
-              <li class="nav-item ">
-                <a class="nav-link" href="/blog/">blog</a>
+              <li class="nav-item active">
+                <a class="nav-link" href="/blog/">blog<span class="sr-only">(current)</span></a>
               </li>
 
               <!-- Other pages -->
               <li class="nav-item ">
                 <a class="nav-link" href="/publications/">publications</a>
               </li>
-              <li class="nav-item active">
-                <a class="nav-link" href="/projects/">projects<span class="sr-only">(current)</span></a>
+              <li class="nav-item ">
+                <a class="nav-link" href="/projects/">projects</a>
               </li>
               <li class="nav-item ">
                 <a class="nav-link" href="/cv/">cv</a>
@@ -116,69 +116,83 @@
     <!-- Content -->
     <div class="container mt-5">
       
-        <!-- page.html -->
-        <div class="post">
+        <!-- _layouts/post.html -->
 
-          <header class="post-header">
-            <h1 class="post-title">projects</h1>
-            <p class="post-description"></p>
-          </header>
+<div class="post">
 
-          <article>
-            <!-- pages/projects.md -->
-<div class="projects">
-  <!-- Display categorized projects -->
-  <h2 class="category">projects</h2>
-  <!-- Generate cards for each project -->
-  <div class="grid">
-<!-- _includes/projects.html -->
-<div class="grid-sizer"></div>
-<div class="grid-item">
-  <a href="https://github.com/utahorange/Windows-Lockdown" rel="external nofollow noopener" target="_blank">
-      <div class="card hoverable">
-        <div class="card-body">
-          <h2 class="card-title text-lowercase">Windows Lockdown</h2>
-          <p class="card-text">Windows OS Hardening Script</p>
-          <div class="row ml-1 mr-1 p-0">
-          </div>
-        </div>
-      </div>
-    </a>
-</div>
-<!-- _includes/projects.html -->
-<div class="grid-sizer"></div>
-<div class="grid-item">
-  <a href="https://github.com/utahorange/chroma-fit" rel="external nofollow noopener" target="_blank">
-      <div class="card hoverable">
-        <div class="card-body">
-          <h2 class="card-title text-lowercase">Chroma Fit</h2>
-          <p class="card-text">a website to get your color analysis in seconds with ml</p>
-          <div class="row ml-1 mr-1 p-0">
-          </div>
-        </div>
-      </div>
-    </a>
-</div>
-<!-- _includes/projects.html -->
-<div class="grid-sizer"></div>
-<div class="grid-item">
-  <a href="https://github.com/utahorange/minesweeper" rel="external nofollow noopener" target="_blank">
-      <div class="card hoverable">
-        <div class="card-body">
-          <h2 class="card-title text-lowercase">Networked Minesweeper</h2>
-          <p class="card-text">Minesweeper in C++ using pthreads and sockets</p>
-          <div class="row ml-1 mr-1 p-0">
-          </div>
-        </div>
-      </div>
-    </a>
-</div>
-  </div>
-</div>
+  <header class="post-header">
+    <h1 class="post-title">Automating Notes</h1>
+    <p class="post-meta">April 1, 2025</p>
+    <p class="post-tags">
+      <a href="/blog/2025"> <i class="fas fa-calendar fa-sm"></i> 2025 </a>
+        ·  
+        <a href="/blog/tag/workflow">
+          <i class="fas fa-hashtag fa-sm"></i> workflow</a>  
+          
 
-          </article>
+    </p>
+  </header>
 
-        </div>
+  <article class="post-content">
+    
+    <div id="markdown-content">
+      <p>Previously, I’ve written on Medium about how I use Obsidian for notetaking and how it’s been a very large part of how I get through schoolwork and learning things in general. Recently, I’ve finally done something I should’ve done a long time ago, which is to start to move away from Google Drive and use Git for version control.</p>
+
+<p>Below is my current backup script, automated with crontabs to run every night at 11 pm. The right thing to do is to put this script up as a Github Gist, but I felt that an article on my site seems more organized.</p>
+
+<p>To do this for yourself is pretty easy. Store your notes somewhere locally or something that is accessible by your file system. Start a git repository in that directory and set as the remote an empty repository on Github. You’ll need to authenticate with the command-line Github authenticator for this to work.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/bin/bash
+
+current_date=$(date '+%Y-%m-%d')
+dir=my/notes/directory/on/Google/Drive
+
+# Attempting to zip files for local backup
+
+num_files=$(ls -1 "$dir" | wc -l)
+
+echo "Attempting to zip $dir, which contains $num_file files for local backup..."
+
+{
+
+zip -rq ~/Documents/Backups/Notes/"$current_date".zip "$dir"/* &amp;&amp; echo "Success. Backup created $current_date" 
+
+} || {
+
+echo "Backup failed."
+
+}
+
+# Push Changes to Github
+echo "Attempting to commit and push changes to GitHub..."
+
+cd "$dir" || { echo "Failed to cd into $dir"; exit 1; }
+
+# Check for changes
+if [ -n "$(git status --porcelain)" ]; then
+    git add .
+    git commit -m "Daily backup auto-commit: $current_date"
+    git push origin main || echo "Git push failed."
+else
+    echo "No changes to commit."
+fi
+
+# Deleting files older than 3 days
+echo "Attempting to delete files older than 3 days"
+{
+
+find ~/Documents/Backups/Notes -mindepth 1 -mtime +3 -delete
+
+} || {
+
+echo "Failed to delete files older than 3 days"
+
+}
+</code></pre></div></div>
+
+    </div>
+  </article>
+</div>
 
       
     </div>

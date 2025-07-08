@@ -2,23 +2,22 @@
 <html lang="en">
 
   <!-- Head -->
-  <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    <!-- Metadata, OpenGraph and Schema.org -->
+  <head>    <!-- Metadata, OpenGraph and Schema.org -->
     
 
     <!-- Standard metadata -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Playing with Threads for Matmults | Tai-Yu  Chen</title>
-    <meta name="author" content="Tai-Yu  Chen">
+    <title>blog - page 3 | Tai-Yu  Chen</title>
+    <meta name="author" content="Tai-Yu  Chen" />
     <meta name="description" content="Tai-Yu Chen's website
-">
+" />
 
 
     <!-- Bootstrap & MDB -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-DF7Zhf293AJxJNTmh5zhoYYIMs2oXitRfBjY+9L//AY=" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous" />
 
     <!-- Bootstrap Table -->
     <link defer rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
@@ -29,20 +28,20 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons">
 
     <!-- Code Syntax Highlighting -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/github.css" media="" id="highlight_theme_light">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/github.css" media="" id="highlight_theme_light" />
 
     
 
     <!-- Styles -->
     
-    <link rel="shortcut icon" href="/assets/img/icon.png">
+    <link rel="shortcut icon" href="/assets/img/icon.png"/>
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://utahorange.github.io/blog/2025/matmult-threading/">
+    <link rel="canonical" href="https://utahorange.github.io/blog/page/3/">
 
     <!-- Dark Mode -->
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/native.css" media="none" id="highlight_theme_dark">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/native.css" media="none" id="highlight_theme_dark" />
 
     <script src="/assets/js/theme.js"></script>
     <script src="/assets/js/dark_mode.js"></script>
@@ -59,7 +58,7 @@
       <!-- Nav Bar -->
       <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top">
         <div class="container">
-          <a class="navbar-brand title font-weight-lighter" href="/"><span class="font-weight-bold">Tai-Yu </span>Chen</a>
+          <a class="navbar-brand title font-weight-lighter" href="/"><span class="font-weight-bold">Tai-Yu&nbsp;</span>Chen</a>
           <!-- Navbar Toggle -->
           <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="sr-only">Toggle navigation</span>
@@ -116,59 +115,80 @@
     <!-- Content -->
     <div class="container mt-5">
       
-        <!-- _layouts/post.html -->
+        <div class="post">
 
-<div class="post">
+  
+  
 
-  <header class="post-header">
-    <h1 class="post-title">Playing with Threads for Matmults</h1>
-    <p class="post-meta">April 1, 2025</p>
-    <p class="post-tags">
-      <a href="/blog/2025"> <i class="fas fa-calendar fa-sm"></i> 2025 </a>
-        ·  
-        <a href="/blog/tag/concurrency">
-          <i class="fas fa-hashtag fa-sm"></i> concurrency</a>  
+  
+
+  
+  <div class="tag-list">
+    <ul class="p-0 m-0">
+      
+        <li>
+          <i class="fas fa-hashtag fa-sm"></i> <a href="/blog/tag/workflow">workflow</a>
+        </li>
+        
+          <p>&bull;</p>
+        
+      
+        <li>
+          <i class="fas fa-hashtag fa-sm"></i> <a href="/blog/tag/networking">networking</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+
+  <ul class="post-list">
+    
+
+    
+    
+    
+    
+
+    <li><h3>
+        
+          <a class="post-title" href="https://medium.com/@taiyu_chen/cisco-networking-in-cyberpatriot-f82834e3067e?source=rss-13d5b90141ed------2" target="_blank">Cisco Networking in CyberPatriot</a>
+          <svg width="2rem" height="2rem" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        
+      </h3>
+      <p></p>
+      <p class="post-meta">
+        5 min read &nbsp; &middot; &nbsp;
+        April 17, 2023
+        &nbsp; &middot; &nbsp; medium.com
+      </p>
+      <p class="post-tags">
+        <a href="/blog/2023">
+          <i class="fas fa-calendar fa-sm"></i> 2023 </a>
+
           
 
-    </p>
-  </header>
+          
+    </p></li>
 
-  <article class="post-content">
     
-    <div id="markdown-content">
-      <p>For a side project, I’ve been digging into C++ concurrency primitives. Previously, I finished reading OSTEP and found thread synchronization unintuitive, but very interesting.</p>
+  </ul>
 
-<p>To learn more about how to use <code class="language-plaintext highlighter-rouge">std::thread</code>, I decided to do a performance comparison of threaded vs unthreaded matmult. Matmult (or matrix multiplication) is a very big thing nowadays and is an obviously parallelizable task. A thread to compute dot product can be dispatched for each element of the resultant matrix, since the elements of the result are not dependent on each other.</p>
+  <nav aria-label="Blog page naviation">
+  <ul class="pagination pagination-lg justify-content-center">
+    <li class="page-item ">
+      <a class="page-link" href="/blog/page/2/" tabindex="-1" aria-disabled="2">Newer</a>
+    </li><li class="page-item "><a class="page-link" href="/blog/index.html" title="blog">1</a></li>
+      <li class="page-item "><a class="page-link" href="/blog/page/2/index.html" title="blog - page 2">2</a></li>
+      <li class="page-item active"><a class="page-link" href="/blog/page/3/index.html" title="blog - page 3">3</a></li>
+      <li class="page-item disabled">
+      <a class="page-link" href="">Older</a>
+    </li>
+  </ul>
+</nav>
 
-<p>That’s really what makes ML models feasible: GPU/TPU’s now have the ability to really parallelize their matmults for training/inference. As one of my ECE professors recently said, the AI boom was fueled by hardware innovations that saw the Scaling Law allow us to actually have good results with deep neural networks.</p>
-
-<h2 id="quick-theory-overview">quick theory overview</h2>
-
-<p>I’ll quickly review how to multiply two matrices together to see where multi-threading comes in. The naive way to do matmults is to simply do three for-loops: two for-loops to go through every result element of the result matrix and one for-loop to go through the dot product computation row-wise on matrix A and column-wise on matrix B for the product $AB=C$. That looks like this:</p>
-
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-</code></pre></div></div>
-
-<p>To multiply two matrices together requires the number of <strong>columns</strong> of the first matrix to match the number of <strong>rows</strong> of the second. I do that check with C++’s <code class="language-plaintext highlighter-rouge">std::cassert</code> library.</p>
-
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
-
-<h2 id="my-thought-process-going-in">my thought process going in</h2>
-
-<h2 id="trolling">trolling</h2>
-<p>“That’s weird”, I remarked as I saw the multi-threading implementation often taking as much as a factor 10 times longer than the unthreaded version.</p>
-
-<h2 id="conclusions">conclusions</h2>
-<p>Turns out, threading is not as OP as I thought. Naively applying optimizations like threading doesn’t necessarily translate to real performance benefits. In hindsight, I probably should’ve seen this one coming, since this was an often-stated theme of OSTEP and software dev articles I’ve read. “Premature optimization is the root of all evil” or something.</p>
-
-<p>A good summary of the possible performance problems with naive multithreading can be found in <a href="https://stackoverflow.com/questions/50082047/multi-threaded-matrix-multiplication-performance-issue" rel="external nofollow noopener" target="_blank">this StackOverflow post</a>.</p>
-
-<p>In reality, no one’s hand-coding implementations of matmult or whatnot by hand nowadays. Just use Python with JIT or Numba or something says very pragmatic ML researchers. And the naive triple for-loop matmult algorithm isn’t even the most efficient (in terms of Big O) algorithm around. With some <a href="https://people.csail.mit.edu/virgi/matrixmult-f.pdf" rel="external nofollow noopener" target="_blank">mysterious linear algebra</a>, you can get down to \(O(n^{2.373})\) instead of \(O(n^3)\).</p>
-
-<p>My code for the threaded matmult comparisons can be found <a href="https://github.com/utahorange/matmult-testing" rel="external nofollow noopener" target="_blank">here</a> as well as some other concurrency practice programs I was playing with.</p>
-
-    </div>
-  </article>
 </div>
 
       
@@ -177,7 +197,7 @@
     <!-- Footer -->    
     <footer class="fixed-bottom">
       <div class="container mt-0">
-        © Copyright 2025 Tai-Yu  Chen. 
+        &copy; Copyright 2025 Tai-Yu  Chen. 
       </div>
     </footer>
 

@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>projects | Tai-Yu  Chen</title>
+    <title>Playing with Threads for Matmults Part II | Tai-Yu  Chen</title>
     <meta name="author" content="Tai-Yu  Chen">
     <meta name="description" content="Tai-Yu Chen's website
 ">
@@ -38,7 +38,7 @@
     <link rel="shortcut icon" href="/assets/img/icon.png">
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://utahorange.github.io/projects/">
+    <link rel="canonical" href="https://utahorange.github.io/blog/2025/matmult-threading-2/">
 
     <!-- Dark Mode -->
     
@@ -77,16 +77,16 @@
               </li>
               
               <!-- Blog -->
-              <li class="nav-item ">
-                <a class="nav-link" href="/blog/">blog</a>
+              <li class="nav-item active">
+                <a class="nav-link" href="/blog/">blog<span class="sr-only">(current)</span></a>
               </li>
 
               <!-- Other pages -->
               <li class="nav-item ">
                 <a class="nav-link" href="/publications/">publications</a>
               </li>
-              <li class="nav-item active">
-                <a class="nav-link" href="/projects/">projects<span class="sr-only">(current)</span></a>
+              <li class="nav-item ">
+                <a class="nav-link" href="/projects/">projects</a>
               </li>
               <li class="nav-item ">
                 <a class="nav-link" href="/cv/">cv</a>
@@ -116,69 +116,33 @@
     <!-- Content -->
     <div class="container mt-5">
       
-        <!-- page.html -->
-        <div class="post">
+        <!-- _layouts/post.html -->
 
-          <header class="post-header">
-            <h1 class="post-title">projects</h1>
-            <p class="post-description"></p>
-          </header>
+<div class="post">
 
-          <article>
-            <!-- pages/projects.md -->
-<div class="projects">
-  <!-- Display categorized projects -->
-  <h2 class="category">projects</h2>
-  <!-- Generate cards for each project -->
-  <div class="grid">
-<!-- _includes/projects.html -->
-<div class="grid-sizer"></div>
-<div class="grid-item">
-  <a href="https://github.com/utahorange/Windows-Lockdown" rel="external nofollow noopener" target="_blank">
-      <div class="card hoverable">
-        <div class="card-body">
-          <h2 class="card-title text-lowercase">Windows Lockdown</h2>
-          <p class="card-text">Windows OS Hardening Script</p>
-          <div class="row ml-1 mr-1 p-0">
-          </div>
-        </div>
-      </div>
-    </a>
-</div>
-<!-- _includes/projects.html -->
-<div class="grid-sizer"></div>
-<div class="grid-item">
-  <a href="https://github.com/utahorange/chroma-fit" rel="external nofollow noopener" target="_blank">
-      <div class="card hoverable">
-        <div class="card-body">
-          <h2 class="card-title text-lowercase">Chroma Fit</h2>
-          <p class="card-text">a website to get your color analysis in seconds with ml</p>
-          <div class="row ml-1 mr-1 p-0">
-          </div>
-        </div>
-      </div>
-    </a>
-</div>
-<!-- _includes/projects.html -->
-<div class="grid-sizer"></div>
-<div class="grid-item">
-  <a href="https://github.com/utahorange/minesweeper" rel="external nofollow noopener" target="_blank">
-      <div class="card hoverable">
-        <div class="card-body">
-          <h2 class="card-title text-lowercase">Networked Minesweeper</h2>
-          <p class="card-text">Minesweeper in C++ using pthreads and sockets</p>
-          <div class="row ml-1 mr-1 p-0">
-          </div>
-        </div>
-      </div>
-    </a>
-</div>
-  </div>
-</div>
+  <header class="post-header">
+    <h1 class="post-title">Playing with Threads for Matmults Part II</h1>
+    <p class="post-meta">April 1, 2025</p>
+    <p class="post-tags">
+      <a href="/blog/2025"> <i class="fas fa-calendar fa-sm"></i> 2025 </a>
+        ·  
+        <a href="/blog/tag/concurrency">
+          <i class="fas fa-hashtag fa-sm"></i> concurrency</a>  
+          
 
-          </article>
+    </p>
+  </header>
 
-        </div>
+  <article class="post-content">
+    
+    <div id="markdown-content">
+      <p>Previously, I tried to parallelize matmults with my very beginner-level of C++ knowledge. What I learned from that I chronicled here. Lo and behold, my introduction to computer organization class taught me about OpenMP, which is like the one major C++ concurrency API. This was quite awesome.</p>
+
+<p>So I was obligated to come back and implement matmult, but better this time, and hopefully not as naively. This is how it went down.</p>
+
+    </div>
+  </article>
+</div>
 
       
     </div>
