@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Playing with Threads for Matmults
+title: Playing with Threads for Matmults Part I
 date: 2025-4-1 15:00:00
 description:
 tags: concurrency
@@ -15,11 +15,7 @@ That's really what makes ML models feasible: GPU/TPU's now have the ability to r
 
 ## quick theory overview
 
-I'll quickly review how to multiply two matrices together to see where multi-threading comes in. The naive way to do matmults is to simply do three for-loops: two for-loops to go through every result element of the result matrix and one for-loop to go through the dot product computation row-wise on matrix A and column-wise on matrix B for the product $AB=C$. That looks like this:
-
-```cpp
-
-```
+I'll quickly review how to multiply two matrices together to see where multi-threading comes in. The naive way to do matmults is to simply do three for-loops: two for-loops to go through every result element of the result matrix and one for-loop to go through the dot product computation row-wise on matrix A and column-wise on matrix B for the product $$AB=C$$.
 
 To multiply two matrices together requires the number of **columns** of the first matrix to match the number of **rows** of the second. I do that check with C++'s `std::cassert` library.
 
@@ -28,11 +24,11 @@ To multiply two matrices together requires the number of **columns** of the firs
 
 ## my thought process going in
 
+Having been inspired by videos like [LaurieWired's Santa concurrency problem](https://www.youtube.com/watch?v=zwUzulwiDpI&ab_channel=LaurieWired), I thought naively 
 
 
 ## trolling
 "That's weird", I remarked as I saw the multi-threading implementation often taking as much as a factor 10 times longer than the unthreaded version.
-
 
 ## conclusions
 Turns out, threading is not as OP as I thought. Naively applying optimizations like threading doesn't necessarily translate to real performance benefits. In hindsight, I probably should've seen this one coming, since this was an often-stated theme of OSTEP and software dev articles I've read. "Premature optimization is the root of all evil" or something.
