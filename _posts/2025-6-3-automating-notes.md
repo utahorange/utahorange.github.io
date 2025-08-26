@@ -8,13 +8,13 @@ categories:
 thumbnail: 
 ---
 
-Previously, I've written on Medium about how I use Obsidian for notetaking and how it's been a very large part of how I get through schoolwork and learning things in general. Recently, I've finally done something I should've done a long time ago, which is to start to move away from Google Drive and use Git for version control.
+Previously, I've written on Medium about how I use Obsidian for notetaking and how it's been a very large part of how I get through schoolwork and learning things in general. Recently, I've finally done something I should've done a long time ago, which is to move away from Google Drive and use Git for version control.
 
 Below is my current backup script, automated with crontabs to run every night at 11 pm. The right thing to do is to put this script up as a Github Gist, but I felt that an article on my site seems more organized.
 
 To do this for yourself is pretty easy. Store your notes somewhere locally or something that is accessible by your file system. Start a git repository in that directory and set as the remote an empty repository on Github. You'll need to authenticate with the command-line Github authenticator for this to work.
 
-```
+```bash
 #!/bin/bash
 
 current_date=$(date '+%Y-%m-%d')

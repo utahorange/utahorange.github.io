@@ -1,9 +1,9 @@
 ---
 layout: page
-title: Networked Minesweeper
-description: Minesweeper in C++ using pthreads and sockets
+title: Minesweeper
+description: multiplayer minesweeper built using pthreads and sockets in C++ 
 img: 
 importance: 1
-redirect: https://github.com/utahorange/minesweeper 
+redirect: 
 category: projects
 ---
