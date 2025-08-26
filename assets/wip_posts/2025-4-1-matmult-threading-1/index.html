@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>concurrency | Tai-Yu  Chen</title>
+    <title>Playing with Threads for Matmults Part I | Tai-Yu  Chen</title>
     <meta name="author" content="Tai-Yu  Chen">
     <meta name="description" content="Tai-Yu Chen's website
 ">
@@ -38,7 +38,7 @@
     <link rel="shortcut icon" href="/assets/img/icon.png">
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://utahorange.github.io/blog/tag/concurrency/">
+    <link rel="canonical" href="https://utahorange.github.io/assets/wip_posts/2025-4-1-matmult-threading-1/">
 
     <!-- Dark Mode -->
     
@@ -77,19 +77,16 @@
               </li>
               
               <!-- Blog -->
-              <li class="nav-item active">
-                <a class="nav-link" href="/blog/">blog<span class="sr-only">(current)</span></a>
+              <li class="nav-item ">
+                <a class="nav-link" href="/blog/">blog</a>
               </li>
 
               <!-- Other pages -->
               <li class="nav-item ">
-                <a class="nav-link" href="/publications/">publications</a>
-              </li>
-              <li class="nav-item ">
                 <a class="nav-link" href="/projects/">projects</a>
               </li>
               <li class="nav-item ">
-                <a class="nav-link" href="/cv/">cv</a>
+                <a class="nav-link" href="/publications/">publications</a>
               </li>
 
               <!-- Toogle theme mode -->
@@ -116,35 +113,58 @@
     <!-- Content -->
     <div class="container mt-5">
       
-        <div class="post">
+        <!-- _layouts/post.html -->
+
+<div class="post">
 
   <header class="post-header">
-    <h1 class="post-title"> <i class="fas fa-hashtag fa-sm"></i> concurrency </h1>
-    <p class="post-description"> an archive of posts with this tag </p>
+    <h1 class="post-title">Playing with Threads for Matmults Part I</h1>
+    <p class="post-meta">April 1, 2025</p>
+    <p class="post-tags">
+      <a href="/blog/2025"> <i class="fas fa-calendar fa-sm"></i> 2025 </a>
+        ·  
+        <a href="/blog/tag/concurrency">
+          <i class="fas fa-hashtag fa-sm"></i> concurrency</a>  
+          
+
+    </p>
   </header>
 
-  <article>
-    <div class="table-responsive">
-      <table class="table table-sm table-borderless">
-        
-        <tr>
-          <th scope="row">Apr 1, 2025</th>
-          <td>
-              <a class="post-link" href="/blog/2025/matmult-threading-2/">Playing with Threads for Matmults Part II</a>
-          </td>
-        </tr>
-      
-        <tr>
-          <th scope="row">Apr 1, 2025</th>
-          <td>
-              <a class="post-link" href="/blog/2025/matmult-threading-1/">Playing with Threads for Matmults Part I</a>
-          </td>
-        </tr>
-      
-      </table>
+  <article class="post-content">
+    
+    <div id="markdown-content">
+      <p>For a side project, I’ve been digging into C++ concurrency primitives. Previously, I finished reading OSTEP and found thread synchronization unintuitive, but very interesting.</p>
+
+<p>To learn more about how to use <code class="language-plaintext highlighter-rouge">std::thread</code>, I decided to do a performance comparison of threaded vs unthreaded matmult. Matmult (or matrix multiplication) is a very big thing nowadays and is an obviously parallelizable task. A thread to compute dot product can be dispatched for each element of the resultant matrix, since the elements of the result are not dependent on each other.</p>
+
+<p>That’s really what makes ML models feasible: GPU/TPU’s now have the ability to really parallelize their matmults for training/inference. As one of my ECE professors recently said, the AI boom was fueled by hardware innovations that saw the Scaling Law allow us to actually have good results with deep neural networks.</p>
+
+<h2 id="quick-theory-overview">quick theory overview</h2>
+
+<p>I’ll quickly review how to multiply two matrices together to see where multi-threading comes in. The naive way to do matmults is to simply do three for-loops: two for-loops to go through every result element of the result matrix and one for-loop to go through the dot product computation row-wise on matrix A and column-wise on matrix B for the product \(AB=C\).</p>
+
+<p>To multiply two matrices together requires the number of <strong>columns</strong> of the first matrix to match the number of <strong>rows</strong> of the second. I do that check with C++’s <code class="language-plaintext highlighter-rouge">std::cassert</code> library.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+
+<h2 id="my-thought-process-going-in">my thought process going in</h2>
+
+<p>Having been inspired by videos like <a href="https://www.youtube.com/watch?v=zwUzulwiDpI&amp;ab_channel=LaurieWired" rel="external nofollow noopener" target="_blank">LaurieWired’s Santa concurrency problem</a>, I thought naively</p>
+
+<h2 id="trolling">trolling</h2>
+<p>“That’s weird”, I remarked as I saw the multi-threading implementation often taking as much as a factor 10 times longer than the unthreaded version.</p>
+
+<h2 id="conclusions">conclusions</h2>
+<p>Turns out, threading is not as OP as I thought. Naively applying optimizations like threading doesn’t necessarily translate to real performance benefits. In hindsight, I probably should’ve seen this one coming, since this was an often-stated theme of OSTEP and software dev articles I’ve read. “Premature optimization is the root of all evil” or something.</p>
+
+<p>A good summary of the possible performance problems with naive multithreading can be found in <a href="https://stackoverflow.com/questions/50082047/multi-threaded-matrix-multiplication-performance-issue" rel="external nofollow noopener" target="_blank">this StackOverflow post</a>.</p>
+
+<p>In reality, no one’s hand-coding implementations of matmult or whatnot by hand nowadays. Just use Python with JIT or Numba or something says very pragmatic ML researchers. And the naive triple for-loop matmult algorithm isn’t even the most efficient (in terms of Big O) algorithm around. With some <a href="https://people.csail.mit.edu/virgi/matrixmult-f.pdf" rel="external nofollow noopener" target="_blank">mysterious linear algebra</a>, you can get down to \(O(n^{2.373})\) instead of \(O(n^3)\).</p>
+
+<p>My code for the threaded matmult comparisons can be found <a href="https://github.com/utahorange/matmult-testing" rel="external nofollow noopener" target="_blank">here</a> as well as some other concurrency practice programs I was playing with.</p>
+
     </div>
   </article>
-
 </div>
 
       
