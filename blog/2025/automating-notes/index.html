@@ -139,52 +139,52 @@
 
 <p>To do this for yourself is pretty easy. Store your notes somewhere locally or something that is accessible by your file system. Start a git repository in that directory and set as the remote an empty repository on Github. You’ll need to authenticate with the command-line Github authenticator for this to work.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/bin/bash
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
 
-current_date=$(date '+%Y-%m-%d')
-dir=my/notes/directory/on/Google/Drive
+<span class="nv">current_date</span><span class="o">=</span><span class="si">$(</span><span class="nb">date</span> <span class="s1">'+%Y-%m-%d'</span><span class="si">)</span>
+<span class="nb">dir</span><span class="o">=</span>my/notes/directory/on/Google/Drive
 
-# Attempting to zip files for local backup
+<span class="c"># Attempting to zip files for local backup</span>
 
-num_files=$(ls -1 "$dir" | wc -l)
+<span class="nv">num_files</span><span class="o">=</span><span class="si">$(</span><span class="nb">ls</span> <span class="nt">-1</span> <span class="s2">"</span><span class="nv">$dir</span><span class="s2">"</span> | <span class="nb">wc</span> <span class="nt">-l</span><span class="si">)</span>
 
-echo "Attempting to zip $dir, which contains $num_file files for local backup..."
+<span class="nb">echo</span> <span class="s2">"Attempting to zip </span><span class="nv">$dir</span><span class="s2">, which contains </span><span class="nv">$num_file</span><span class="s2"> files for local backup..."</span>
 
-{
+<span class="o">{</span>
 
-zip -rq ~/Documents/Backups/Notes/"$current_date".zip "$dir"/* &amp;&amp; echo "Success. Backup created $current_date" 
+zip <span class="nt">-rq</span> ~/Documents/Backups/Notes/<span class="s2">"</span><span class="nv">$current_date</span><span class="s2">"</span>.zip <span class="s2">"</span><span class="nv">$dir</span><span class="s2">"</span>/<span class="k">*</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">"Success. Backup created </span><span class="nv">$current_date</span><span class="s2">"</span> 
 
-} || {
+<span class="o">}</span> <span class="o">||</span> <span class="o">{</span>
 
-echo "Backup failed."
+<span class="nb">echo</span> <span class="s2">"Backup failed."</span>
 
-}
+<span class="o">}</span>
 
-# Push Changes to Github
-echo "Attempting to commit and push changes to GitHub..."
+<span class="c"># Push Changes to Github</span>
+<span class="nb">echo</span> <span class="s2">"Attempting to commit and push changes to GitHub..."</span>
 
-cd "$dir" || { echo "Failed to cd into $dir"; exit 1; }
+<span class="nb">cd</span> <span class="s2">"</span><span class="nv">$dir</span><span class="s2">"</span> <span class="o">||</span> <span class="o">{</span> <span class="nb">echo</span> <span class="s2">"Failed to cd into </span><span class="nv">$dir</span><span class="s2">"</span><span class="p">;</span> <span class="nb">exit </span>1<span class="p">;</span> <span class="o">}</span>
 
-# Check for changes
-if [ -n "$(git status --porcelain)" ]; then
-    git add .
-    git commit -m "Daily backup auto-commit: $current_date"
-    git push origin main || echo "Git push failed."
-else
-    echo "No changes to commit."
-fi
+<span class="c"># Check for changes</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="si">$(</span>git status <span class="nt">--porcelain</span><span class="si">)</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+    </span>git add <span class="nb">.</span>
+    git commit <span class="nt">-m</span> <span class="s2">"Daily backup auto-commit: </span><span class="nv">$current_date</span><span class="s2">"</span>
+    git push origin main <span class="o">||</span> <span class="nb">echo</span> <span class="s2">"Git push failed."</span>
+<span class="k">else
+    </span><span class="nb">echo</span> <span class="s2">"No changes to commit."</span>
+<span class="k">fi</span>
 
-# Deleting files older than 3 days
-echo "Attempting to delete files older than 3 days"
-{
+<span class="c"># Deleting files older than 3 days</span>
+<span class="nb">echo</span> <span class="s2">"Attempting to delete files older than 3 days"</span>
+<span class="o">{</span>
 
-find ~/Documents/Backups/Notes -mindepth 1 -mtime +3 -delete
+find ~/Documents/Backups/Notes <span class="nt">-mindepth</span> 1 <span class="nt">-mtime</span> +3 <span class="nt">-delete</span>
 
-} || {
+<span class="o">}</span> <span class="o">||</span> <span class="o">{</span>
 
-echo "Failed to delete files older than 3 days"
+<span class="nb">echo</span> <span class="s2">"Failed to delete files older than 3 days"</span>
 
-}
+<span class="o">}</span>
 </code></pre></div></div>
 
     </div>
