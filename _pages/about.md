@@ -18,6 +18,6 @@ social: true  # includes social icons at the bottom of the page
 
 Hi, I’m a computer science major at UCLA. Right now, I'm mostly interested in performance and security for systems, whether that be distributed ML or embedded.
 
-This summer, I worked on flight software at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/)! At the moment, I'm continuing work at ELFIN, but this time focusing on our commanding architecture and data pipeline. I'm also working on projects in partnership with big tech as part of [Bruin AI](https://bruinai.org/).
+This summer, I built a [filesystem for CubeSats](https://utahorange.github.io/blog/2025/filesystem/) at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/)! At the moment, I'm continuing work at ELFIN, but this time focusing on our commanding architecture and data pipeline. I'm also working on projects in partnership with big tech as part of [Bruin AI](https://bruinai.org/).
 
 In my off-time I enjoy reading, watching movies, and rock climbing. Feel free to reach out at my email!
