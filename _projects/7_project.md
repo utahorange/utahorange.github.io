@@ -1,9 +1,9 @@
 ---
 layout: page
-title: Windows Lockdown
-description: security hardening script for Windows 
+title: Lightweight CubeSat Filesystem
+description: flew on a NASA-funded weather balloon !
 img: 
 importance: 1
-redirect: https://github.com/utahorange/Windows-Lockdown
+redirect: https://utahorange.github.io/blog/2025/filesystem/
 category: projects
 ---

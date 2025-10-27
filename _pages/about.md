@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: CS @ UCLA | Prev Research @ UPenn
+subtitle: 
 
 profile:
   align: right
@@ -16,8 +16,10 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi, I’m a computer science major at UCLA. Right now, I'm mostly interested in performance and security for systems, whether that be distributed ML or embedded.
+I’m currently a computer science major at [UCLA](https://www.ucla.edu/). My interests are mostly in performance and security for systems, whether that be distributed ML or embedded.
 
-This summer, I built a [filesystem for CubeSats](https://utahorange.github.io/blog/2025/filesystem/) at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/)! At the moment, I'm continuing work at ELFIN, but this time focusing on our commanding architecture and data pipeline. I'm also working on projects in partnership with big tech as part of [Bruin AI](https://bruinai.org/).
+This summer, I worked at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/) and wrote a [filesystem](https://utahorange.github.io/blog/2025/filesystem/) that flew on a NASA-funded weather balloon. This quarter I'm focusing on redesigning our commanding architecture and data pipeline to be more performant and extensible for future CubeSat missions.
 
-In my off-time I enjoy reading, watching movies, and rock climbing. Feel free to reach out at my email!
+I'm also working on projects with big tech like [AWS](https://aws.amazon.com/) for the greater UCLA community as a member of [Bruin AI](https://bruinai.org/). 
+
+In my free time I like to read, watch movies, and daydream about going rock climbing. Feel free to reach out at my email.

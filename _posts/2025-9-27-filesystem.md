@@ -12,26 +12,25 @@ thumbnail:
 
 This summer I worked on a custom QSPI NAND flash driver and filesystem for an in-house PCB at UCLA's [Electron Loss Field Investigations Lab](https://elfin.igpp.ucla.edu/) (ELFIN). This was mainly to support the persistent storage of data products from another custom board as well as housekeeping data from the main board. 
 
-> In most industry applications I saw online, developers tended to use someone else’s FTL (flash translation layer) with built-in wear leveling and page allocation, for arbitrary reads and writes to a filesystem. I was considering using [dhara](https://github.com/dlbeer/dhara), which showed up in someone’s NAND flash implementation for another embedded device, but I ended up not doing this. 
->
-> While dhara and other FTL’s, or even filesystems (like [littlefs](https://github.com/littlefs-project/littlefs)) are relatively lightweight compared to Linux filesystems like Ext4 or Windows, for our custom PCB, they still imposed too much overhead, especially with our anticipated data rates when in operation. More overhead, in addition to making our single-threaded microcontroller slower, increases the board’s power consumption when on most space flights, the entire payload will be deeply power-constrained. It was instead more effective to implement a custom solution that stayed as close to bare NAND flash operations as possible. 
+> In what I saw online, most developers tended to use someone else’s FTL (flash translation layer) with built-in wear leveling and page allocation for arbitrary reads and writes to flash. I was considering using [dhara](https://github.com/dlbeer/dhara), but I ended up not doing this. 
 
-The board I was working on is known as SDPI (Software-Defined Payload Interface), which is [UCLA’s winning submission](https://www.nasatechleap.org/news-updates/nasa-techleap-prize-announces-three-winners-of-universal-payload-interface-challenge) to the [NASA Techleap Universal Payload Interface Challenge](https://www.upic.nasatechleap.org/). SDPI would fly on the ELVES weather balloon mission in New Mexico, which meant that the team had a hard deadline of September 2 to build and validate a working system. 
+> While dhara and other FTL’s, or even filesystems like [littlefs](https://github.com/littlefs-project/littlefs) are lightweight compared to Linux filesystems like Ext4 or Windows, for our custom PCB, they still imposed too much overhead, especially with our anticipated data rates. In addition to making our single-threaded microcontroller slower, overhead increases the board’s power consumption: a dire issue when on most space flights, the entire payload will be deeply power-constrained. It was instead more effective to implement a custom solution that stayed as close to NAND flash operations as possible. 
 
-My task was to write a driver to interface with our four on-board NAND flash chips using QSPI and implement filesystems on top of the four flash chips to support storing, searching, and reading data packets from SDPI itself and from another board (FGM20) that would be connected to SDPI. The external flash (so-called because our microcontroller also had its own internal flash) would additionally store scripts (collections of commands) and a superblock region that will be described later.
+The board I was working on is known as SDPI (Software-Defined Payload Interface), which is [UCLA’s winning submission](https://www.nasatechleap.org/news-updates/nasa-techleap-prize-announces-three-winners-of-universal-payload-interface-challenge) to the [NASA Techleap Universal Payload Interface Challenge](https://www.upic.nasatechleap.org/). SDPI would fly on the ELVES weather balloon mission in New Mexico, which meant that the team had a hard deadline of September 2 to build and validate a working system, from data collection on board to analysis on the ground.
 
-On top of this, I wrote endpoints and designed a transmission sequence to communicate data from filesystems back to a ground server, which stores the data in a PostgreSQL database. The end goal is to verify this entire data pipeline, of data from another board to SDPI, into SDPI’s flash via the filesystem, and into the ground server database by a read command, works effectively and efficiently, to support scientific data collection.
+My task was to write a driver to interface with our four on-board NAND flash chips using QSPI and implement filesystems on top of the four flash chips to support storing, searching, and reading data packets from SDPI itself and from another board (FGM20) that would be connected to SDPI. The external flash (so-called because our microcontroller also had its own internal flash) would additionally store scripts and a superblock region.
+
+To support the filesystem on the ground side, I wrote endpoints and designed a transmission sequence to transfer data from filesystems back to a ground server, which stores it in a PostgreSQL database. The end goal was to verify the entire data pipeline, of data from another board to SDPI, into SDPI’s flash via the filesystem, and into the ground server database by a read request.
 
 # External NAND Flash
 
-The beauty of using NAND flash is that it is highly cost-effective and space-efficient, but it poses some unconventional design [challenges](https://www.youtube.com/watch?v=UpxYrmV4OCk) that make it tricky to implement arbitrary writes and erases. 
+The beauty of using NAND flash is that it is highly cost-effective and space-efficient, but it poses some weird design [challenges](https://www.youtube.com/watch?v=UpxYrmV4OCk) that make it tricky to implement arbitrary writes and erases. 
 
 The filesystem was built on four [Alliance Memory SPI NAND flash chips](https://www.alliancememory.com/wp-content/uploads/AllianceMemory_AS5F_QSPI_NAND_Flash_3V-1Gb-8Gb_1p8V-2Gb-4Gb-8Gb_Ver3.1_O.pdf), each with ~ 1 GB of memory. The filesystem is currently designed so that two chips are held in reserve (unused). In the future, I plan to use those chips to mirror all writes to the main two flash chips for redundancy and corruption check purposes. 
 
 From the datasheet, each flash chip has 4096 blocks, each block has 64 pages, and each page has 4352 bytes… Except this is not strictly true. Each chip has around 9 or 10 blocks at the end marked as bad blocks, that were unable to be programmed upon manufacture. Over time, flash chips also accumulate bad blocks as a result of approaching the erase/program cycle limit. 
 
-{% include figure.html path="assets/img/fs_writeup/nand_flash_wear_out.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-Projected lifetime NAND flash failure rate, picture from [SwissBit](https://www.swissbit.com/en/blog/post/Explained-Bad-Block-Management/).
+{% include figure.html path="assets/img/fs_writeup/nand_flash_wear_out.png" class="img-fluid rounded z-depth-1" zoomable=true caption="Projected lifetime NAND flash failure rate, picture from SwissBit." %}
 
 Additionally, 4352 bytes is not evenly divisible by two, making full, continuous addressing of all the bytes difficult. The datasheet internally addresses with rows and columns, where row addresses select blocks and pages, while column addresses select the byte in the page. 
 
@@ -74,8 +73,7 @@ To understand some common NAND functions, let’s consider “Page Read”. Firs
 
 A “Read from Cache” command to the NAND flash looks like this from the datasheet.
 
-{% include figure.html path="assets/img/fs_writeup/read_from_cache_sequence_diagram.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-The discrete high and low signal sequence sent over the four lines to a flash chip during “Read from Cache”.
+{% include figure.html path="assets/img/fs_writeup/read_from_cache_sequence_diagram.png" class="img-fluid rounded z-depth-1" zoomable=true caption="The discrete high and low signal sequence sent over the four lines to a flash chip during 'Read from Cache'." %}
 
 The NAND flash chip exposes a page-size “cache” (4352 bytes) that is the entrypoint of all data flash operations. This limits reads to a page at a time and similarly limits writes to a page at a time. Any operations larger than a page must be abstracted above and handled with additional logic. Both the read and the write operations consist of multiple NAND Flash commands. 
 
@@ -151,8 +149,7 @@ And a few extra special pointers and values that are updated often:
 
 Of the pointers, the most important are head pointer (`fs_head_ptr`) and next page address (`fs_next_page_addr`). 
 
-{% include figure.html path="assets/img/fs_writeup/filesystem_data_storing_behavior.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-Filesystem data storing behavior in external flash versus RAM.
+{% include figure.html path="assets/img/fs_writeup/filesystem_data_storing_behavior.png" class="img-fluid rounded z-depth-1" zoomable=true caption="Filesystem data storing behavior in external flash versus RAM." %}
 
 From the perspective of the ground server, `fs_head_ptr` is the ground truth of how full the filesystem is. It cleanly denotes the end of the last complete packet, and is passed back to the ground server in query and read operations. On the other hand, `fs_next_page_addr` represents what is actually happening in the filesystem in terms of actual content written to flash, because SDPI writes exactly a page at a time.
 
@@ -182,15 +179,13 @@ Query and read requests should be sent without the ground having to know at whic
 
 A query request looks like the following:
  
-{% include figure.html path="assets/img/fs_writeup/query_request.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-Transmission diagram of a query request sent from the backend.
+{% include figure.html path="assets/img/fs_writeup/query_request.png" class="img-fluid rounded z-depth-1" zoomable=true caption="Transmission diagram of a query request sent from the backend." %}
 
 Backend begins by sending a query request to the SDPI board specifying which packet filesystem to look in and for what time range. When SDPI receives a query request, it immediately sends back an acknowledgement frame, essentially echoing the contents of the query it just received. This was done because the search for the first packet past the start_time could take a long time if the packet was very deep in the filesystem. It was determined more effective from the commanding point of view that we got immediate receipts for acknowledgement of query and read requests. After sending the ACK, SDPI searches for the first packet past start_time. If this is found, then it searches for the first packet past end_time, incrementing a count while doing so. Once this process completes, SDPI sends a query response containing the count of packets in this time range, the first packet’s timestamp, the last packet’s timestamp, and the head pointer of this filesystem for bookkeeping on the backend side. 
 
 A read request is somewhat similar but has to deal with actually transmitting the data of the filesystems. We cannot send the contents of an entire filesystem (possibly on the order of a hundred megabytes) in one frame and expect the whole transmission to be successful, so we divide the response to a read request into frames. When SDPI is actually in space, we expect to have high frame loss rates. On the ground server side then, we use whatever frames we do receive, along with additional data in special frames called "bookends" to reconstruct a bitmap of the filesystem we were looking at, so we know what packets we lost and what we need to re-downlink.
 
-{% include figure.html path="assets/img/fs_writeup/read_request.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-Transmission diagram of a read request sent from the backend.
+{% include figure.html path="assets/img/fs_writeup/read_request.png" class="img-fluid rounded z-depth-1" zoomable=true caption="Transmission diagram of a read request sent from the backend." %}
 
 The start bookend contains the packet ID, filesystem head pointer, and the packet address, and timestamp found by the first linear search by SDPI. The end bookend contains the same information as the start bookend, but also the end packet address and timestamp, as well as the count of the number of packets sent in this read. 
 
@@ -228,8 +223,7 @@ Under this design, the core functionalities of searching and buffer appending ha
 
 By doing this, the next page program to flash when the buffer actually is filled past the virtual flash page boundary will program a page that ends on a complete packet somewhere in the 256 bytes spare region. 
 
-{% include figure.html path="assets/img/fs_writeup/extra_space_in_flash_from_addressing.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-Extra space in between virtual flash pages due to addressing and how the extra space can be used for recovery.
+{% include figure.html path="assets/img/fs_writeup/extra_space_in_flash_from_addressing.png" class="img-fluid rounded z-depth-1" zoomable=true caption="Extra space in between virtual flash pages due to addressing and how the extra space can be used for recovery." %}
 
 On startup, we read the last page (next page address minus one full page) and put the remainder of that last packet (the content past the end of the 4096 bytes) into the respective filesystem buffer, to be programmed to flash on the next page write. If SDPI is power cycled here, it ends up in the same state, meaning that no in-flash data is ever lost or corrupted. 
 
@@ -309,4 +303,4 @@ Some articles and presentations that I took inspiration from when writing this o
 * Jasmine Tang's ["What I did for GSoc 2024"](https://badumbatish.github.io/posts/what_I_did_for_gsoc_2024#introduction) was a to-the-point, yet deeply technical view of a self-motivated summer internship-like experience, the style of which I hoped to emulate in this blog post.
 * [“Hacking yourself a Satellite”](https://www.youtube.com/watch?v=KdTcd94pVlY&ab_channel=media.ccc.de) is a classic, but still legendary to me. It’s super cool to me that the old ELFIN team at UCLA did something similar (code injection) in order to upgrade the capabilities of the twin ELFIN satellites during their 4-year mission.
 
-Thanks for making it this far! Hope you found this read enjoyable.
+This article was kind of a word barf of everything technical that happened over my summer. Thanks for making it this far! Hope you found this read enjoyable.
