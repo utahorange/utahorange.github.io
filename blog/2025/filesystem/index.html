@@ -138,20 +138,22 @@
 <p>This summer I worked on a custom QSPI NAND flash driver and filesystem for an in-house PCB at UCLA’s <a href="https://elfin.igpp.ucla.edu/" rel="external nofollow noopener" target="_blank">Electron Loss Field Investigations Lab</a> (ELFIN). This was mainly to support the persistent storage of data products from another custom board as well as housekeeping data from the main board.</p>
 
 <blockquote>
-  <p>In most industry applications I saw online, developers tended to use someone else’s FTL (flash translation layer) with built-in wear leveling and page allocation, for arbitrary reads and writes to a filesystem. I was considering using <a href="https://github.com/dlbeer/dhara" rel="external nofollow noopener" target="_blank">dhara</a>, which showed up in someone’s NAND flash implementation for another embedded device, but I ended up not doing this.</p>
-
-  <p>While dhara and other FTL’s, or even filesystems (like <a href="https://github.com/littlefs-project/littlefs" rel="external nofollow noopener" target="_blank">littlefs</a>) are relatively lightweight compared to Linux filesystems like Ext4 or Windows, for our custom PCB, they still imposed too much overhead, especially with our anticipated data rates when in operation. More overhead, in addition to making our single-threaded microcontroller slower, increases the board’s power consumption when on most space flights, the entire payload will be deeply power-constrained. It was instead more effective to implement a custom solution that stayed as close to bare NAND flash operations as possible.</p>
+  <p>In what I saw online, most developers tended to use someone else’s FTL (flash translation layer) with built-in wear leveling and page allocation for arbitrary reads and writes to flash. I was considering using <a href="https://github.com/dlbeer/dhara" rel="external nofollow noopener" target="_blank">dhara</a>, but I ended up not doing this.</p>
 </blockquote>
 
-<p>The board I was working on is known as SDPI (Software-Defined Payload Interface), which is <a href="https://www.nasatechleap.org/news-updates/nasa-techleap-prize-announces-three-winners-of-universal-payload-interface-challenge" rel="external nofollow noopener" target="_blank">UCLA’s winning submission</a> to the <a href="https://www.upic.nasatechleap.org/" rel="external nofollow noopener" target="_blank">NASA Techleap Universal Payload Interface Challenge</a>. SDPI would fly on the ELVES weather balloon mission in New Mexico, which meant that the team had a hard deadline of September 2 to build and validate a working system.</p>
+<blockquote>
+  <p>While dhara and other FTL’s, or even filesystems like <a href="https://github.com/littlefs-project/littlefs" rel="external nofollow noopener" target="_blank">littlefs</a> are lightweight compared to Linux filesystems like Ext4 or Windows, for our custom PCB, they still imposed too much overhead, especially with our anticipated data rates. In addition to making our single-threaded microcontroller slower, overhead increases the board’s power consumption: a dire issue when on most space flights, the entire payload will be deeply power-constrained. It was instead more effective to implement a custom solution that stayed as close to NAND flash operations as possible.</p>
+</blockquote>
 
-<p>My task was to write a driver to interface with our four on-board NAND flash chips using QSPI and implement filesystems on top of the four flash chips to support storing, searching, and reading data packets from SDPI itself and from another board (FGM20) that would be connected to SDPI. The external flash (so-called because our microcontroller also had its own internal flash) would additionally store scripts (collections of commands) and a superblock region that will be described later.</p>
+<p>The board I was working on is known as SDPI (Software-Defined Payload Interface), which is <a href="https://www.nasatechleap.org/news-updates/nasa-techleap-prize-announces-three-winners-of-universal-payload-interface-challenge" rel="external nofollow noopener" target="_blank">UCLA’s winning submission</a> to the <a href="https://www.upic.nasatechleap.org/" rel="external nofollow noopener" target="_blank">NASA Techleap Universal Payload Interface Challenge</a>. SDPI would fly on the ELVES weather balloon mission in New Mexico, which meant that the team had a hard deadline of September 2 to build and validate a working system, from data collection on board to analysis on the ground.</p>
 
-<p>On top of this, I wrote endpoints and designed a transmission sequence to communicate data from filesystems back to a ground server, which stores the data in a PostgreSQL database. The end goal is to verify this entire data pipeline, of data from another board to SDPI, into SDPI’s flash via the filesystem, and into the ground server database by a read command, works effectively and efficiently, to support scientific data collection.</p>
+<p>My task was to write a driver to interface with our four on-board NAND flash chips using QSPI and implement filesystems on top of the four flash chips to support storing, searching, and reading data packets from SDPI itself and from another board (FGM20) that would be connected to SDPI. The external flash (so-called because our microcontroller also had its own internal flash) would additionally store scripts and a superblock region.</p>
+
+<p>To support the filesystem on the ground side, I wrote endpoints and designed a transmission sequence to transfer data from filesystems back to a ground server, which stores it in a PostgreSQL database. The end goal was to verify the entire data pipeline, of data from another board to SDPI, into SDPI’s flash via the filesystem, and into the ground server database by a read request.</p>
 
 <h1 id="external-nand-flash">External NAND Flash</h1>
 
-<p>The beauty of using NAND flash is that it is highly cost-effective and space-efficient, but it poses some unconventional design <a href="https://www.youtube.com/watch?v=UpxYrmV4OCk" rel="external nofollow noopener" target="_blank">challenges</a> that make it tricky to implement arbitrary writes and erases.</p>
+<p>The beauty of using NAND flash is that it is highly cost-effective and space-efficient, but it poses some weird design <a href="https://www.youtube.com/watch?v=UpxYrmV4OCk" rel="external nofollow noopener" target="_blank">challenges</a> that make it tricky to implement arbitrary writes and erases.</p>
 
 <p>The filesystem was built on four <a href="https://www.alliancememory.com/wp-content/uploads/AllianceMemory_AS5F_QSPI_NAND_Flash_3V-1Gb-8Gb_1p8V-2Gb-4Gb-8Gb_Ver3.1_O.pdf" rel="external nofollow noopener" target="_blank">Alliance Memory SPI NAND flash chips</a>, each with ~ 1 GB of memory. The filesystem is currently designed so that two chips are held in reserve (unused). In the future, I plan to use those chips to mirror all writes to the main two flash chips for redundancy and corruption check purposes.</p>
 
@@ -169,11 +171,9 @@
     <!-- Fallback to the original file -->
     <img src="/assets/img/fs_writeup/nand_flash_wear_out.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
-  </picture>
+  </picture><figcaption class="caption">Projected lifetime NAND flash failure rate, picture from SwissBit.</figcaption>
 
 </figure>
-
-<p>Projected lifetime NAND flash failure rate, picture from <a href="https://www.swissbit.com/en/blog/post/Explained-Bad-Block-Management/" rel="external nofollow noopener" target="_blank">SwissBit</a>.</p>
 
 <p>Additionally, 4352 bytes is not evenly divisible by two, making full, continuous addressing of all the bytes difficult. The datasheet internally addresses with rows and columns, where row addresses select blocks and pages, while column addresses select the byte in the page.</p>
 
@@ -229,11 +229,9 @@ erasing a block (“Block Erase”)</p>
     <!-- Fallback to the original file -->
     <img src="/assets/img/fs_writeup/read_from_cache_sequence_diagram.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
-  </picture>
+  </picture><figcaption class="caption">The discrete high and low signal sequence sent over the four lines to a flash chip during 'Read from Cache'.</figcaption>
 
 </figure>
-
-<p>The discrete high and low signal sequence sent over the four lines to a flash chip during “Read from Cache”.</p>
 
 <p>The NAND flash chip exposes a page-size “cache” (4352 bytes) that is the entrypoint of all data flash operations. This limits reads to a page at a time and similarly limits writes to a page at a time. Any operations larger than a page must be abstracted above and handled with additional logic. Both the read and the write operations consist of multiple NAND Flash commands.</p>
 
@@ -342,11 +340,9 @@ erasing a block (“Block Erase”)</p>
     <!-- Fallback to the original file -->
     <img src="/assets/img/fs_writeup/filesystem_data_storing_behavior.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
-  </picture>
+  </picture><figcaption class="caption">Filesystem data storing behavior in external flash versus RAM.</figcaption>
 
 </figure>
-
-<p>Filesystem data storing behavior in external flash versus RAM.</p>
 
 <p>From the perspective of the ground server, <code class="language-plaintext highlighter-rouge">fs_head_ptr</code> is the ground truth of how full the filesystem is. It cleanly denotes the end of the last complete packet, and is passed back to the ground server in query and read operations. On the other hand, <code class="language-plaintext highlighter-rouge">fs_next_page_addr</code> represents what is actually happening in the filesystem in terms of actual content written to flash, because SDPI writes exactly a page at a time.</p>
 
@@ -390,11 +386,9 @@ erasing a block (“Block Erase”)</p>
     <!-- Fallback to the original file -->
     <img src="/assets/img/fs_writeup/query_request.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
-  </picture>
+  </picture><figcaption class="caption">Transmission diagram of a query request sent from the backend.</figcaption>
 
 </figure>
-
-<p>Transmission diagram of a query request sent from the backend.</p>
 
 <p>Backend begins by sending a query request to the SDPI board specifying which packet filesystem to look in and for what time range. When SDPI receives a query request, it immediately sends back an acknowledgement frame, essentially echoing the contents of the query it just received. This was done because the search for the first packet past the start_time could take a long time if the packet was very deep in the filesystem. It was determined more effective from the commanding point of view that we got immediate receipts for acknowledgement of query and read requests. After sending the ACK, SDPI searches for the first packet past start_time. If this is found, then it searches for the first packet past end_time, incrementing a count while doing so. Once this process completes, SDPI sends a query response containing the count of packets in this time range, the first packet’s timestamp, the last packet’s timestamp, and the head pointer of this filesystem for bookkeeping on the backend side.</p>
 
@@ -412,11 +406,9 @@ erasing a block (“Block Erase”)</p>
     <!-- Fallback to the original file -->
     <img src="/assets/img/fs_writeup/read_request.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
-  </picture>
+  </picture><figcaption class="caption">Transmission diagram of a read request sent from the backend.</figcaption>
 
 </figure>
-
-<p>Transmission diagram of a read request sent from the backend.</p>
 
 <p>The start bookend contains the packet ID, filesystem head pointer, and the packet address, and timestamp found by the first linear search by SDPI. The end bookend contains the same information as the start bookend, but also the end packet address and timestamp, as well as the count of the number of packets sent in this read.</p>
 
@@ -468,11 +460,9 @@ erasing a block (“Block Erase”)</p>
     <!-- Fallback to the original file -->
     <img src="/assets/img/fs_writeup/extra_space_in_flash_from_addressing.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
-  </picture>
+  </picture><figcaption class="caption">Extra space in between virtual flash pages due to addressing and how the extra space can be used for recovery.</figcaption>
 
 </figure>
-
-<p>Extra space in between virtual flash pages due to addressing and how the extra space can be used for recovery.</p>
 
 <p>On startup, we read the last page (next page address minus one full page) and put the remainder of that last packet (the content past the end of the 4096 bytes) into the respective filesystem buffer, to be programmed to flash on the next page write. If SDPI is power cycled here, it ends up in the same state, meaning that no in-flash data is ever lost or corrupted.</p>
 
@@ -571,7 +561,7 @@ erasing a block (“Block Erase”)</p>
 <a href="https://www.youtube.com/watch?v=KdTcd94pVlY&amp;ab_channel=media.ccc.de" rel="external nofollow noopener" target="_blank">“Hacking yourself a Satellite”</a> is a classic, but still legendary to me. It’s super cool to me that the old ELFIN team at UCLA did something similar (code injection) in order to upgrade the capabilities of the twin ELFIN satellites during their 4-year mission.</li>
 </ul>
 
-<p>Thanks for making it this far! Hope you found this read enjoyable.</p>
+<p>This article was kind of a word barf of everything technical that happened over my summer. Thanks for making it this far! Hope you found this read enjoyable.</p>
 
     </div>
   </article>
