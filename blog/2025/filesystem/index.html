@@ -193,10 +193,12 @@
 </blockquote>
 
 <h2 id="qspi-nand-flash-operations">QSPI NAND Flash operations</h2>
-<p>The major operations of the NAND flash are:
-reading a page (“Page Read”)
-writing a page (“Page Program”)
-erasing a block (“Block Erase”)</p>
+<p>The major operations of the NAND flash are:</p>
+<ul>
+  <li>reading a page (“Page Read”)</li>
+  <li>writing a page (“Page Program”)</li>
+  <li>erasing a block (“Block Erase”)</li>
+</ul>
 
 <p>These are generally implemented as a call to the transfer function, which takes a struct bundling a few parameters:</p>
 
@@ -213,7 +215,12 @@ erasing a block (“Block Erase”)</p>
 
 <p>The transfer function sends the command opcode and corresponding arguments byte by byte across the SI pin of the QSPI connection to the respective flash chip. Beyond the three core functionalities listed above, there are numerous helper functions that also use this transfer function.</p>
 
-<p>To understand some common NAND functions, let’s consider “Page Read”. First this calls the NAND flash “Read to Cache” command to load the respective page into cache. The flash driver waits on this command’s completion by polling the byte in the status register. Once this command finishes, the driver calls a “Read from Cache” command to load the contents of the page-sized cache into the buffer that was passed to the NAND flash function.</p>
+<p>To understand some common NAND functions, let’s consider “Page Read”. This does the following:</p>
+<ol>
+  <li>Call the NAND flash “Read to Cache” command to load the respective page into cache.</li>
+  <li>Flash driver waits on this command’s completion by polling the byte in the status register.</li>
+  <li>Once this command finishes, the driver calls a “Read from Cache” command to load the contents of the page-sized cache into the buffer that was passed to the NAND flash function.</li>
+</ol>
 
 <p>A “Read from Cache” command to the NAND flash looks like this from the datasheet.</p>
 
@@ -266,7 +273,7 @@ erasing a block (“Block Erase”)</p>
 
 <p>Pages sizes of 4096 bytes are easy to operate on by virtue of being a power of 2. Instead of dividing or doing modulo on awkward sizes of 4352 to translate from virtual address to flash row and column addresses, bitmasks could now be used. Division and modulo operations take significantly more clock cycles than bitmasking, which was an important consideration considering how often addresses would be translated in normal flash operation.</p>
 
-<p>From this design, SDPI loses around 5.9% of our storage capacity, which for flash chips of 4 GB total capacity on an embedded device, felt like an acceptable loss, especially since SDPI would lose more when mirroring is implemented. Having the extra 256 bytes of space is not a bad thing. Early in the design process, my project manager suggested adding page metadata (such as when a packet ends in the page) or error correction bytes (fairly common practice). While I did not yet implement this, I discovered the extra space is useful for an operation called filesystem recovery, which will be described later.</p>
+<p>From this design, SDPI loses around 5.9% of our storage capacity, which for flash chips of 4 GB total capacity on an embedded device, felt like an acceptable loss, especially since SDPI would lose more when mirroring is implemented. Having the extra 256 bytes of space is not a bad thing. Early in the design process, my project manager suggested adding page metadata (such as when a packet ends in the page) or error correction bytes. While I did not yet implement this, I discovered the extra space is useful for an operation called filesystem recovery, which will be described later.</p>
 
 <p>Another important aspect of the virtual flash driver was the function <code class="language-plaintext highlighter-rouge">erase_write</code>, intended to allow for arbitrary writes. Because of the peculiarities of NAND flash, arbitrary writes are complex and inefficient, but it was still important to expose a function to do this in order to support other functionalities of SDPI that used the external flash.</p>
 
@@ -539,13 +546,13 @@ erasing a block (“Block Erase”)</p>
   <li>
 <strong>Whiteboard / think about function flow before programming.</strong> Many of the features I had to implement this summer had numerous edge cases, often due to hardware limitations that were hard to observe without a cohesive picture of the larger system. This was especially true about the filesystem <code class="language-plaintext highlighter-rouge">store_packets</code> and updating pointers functionalities, and later on, the superblocks region. Before attempting to write any code, I often drew out the moving parts of the system and observed them functioning in the way I expected them to on a whiteboard to see potential problems and unexpected behavior.</li>
   <li>
-<strong>Be intentional with what you don’t include in your API.</strong> In the same vein as the lessons from the legendary blog Joel on Software, minimal and simple is best. I aimed to abstract as much of the hardware-specific NAND flash details as I could and hide them under the virtual flash driver to expose as minimal a function set as I could. These choices helped me later on when writing filesystem functions, by restricting the possible functions I could use, forcing me to design smarter and unwittingly optimizing for fewer NAND flash operations.</li>
+<strong>Be intentional with what you don’t include in your API.</strong> In the same vein as the lessons from the legendary blog Joel on Software, minimal and simple is best. I aimed to abstract as much of the hardware-specific NAND flash details as I could and hide them under the virtual flash driver to expose as minimal a function set as I could. These choices helped me later on when writing filesystem functions, by restricting the possible functions I could use, forcing me to unwittingly optimize for fewer NAND flash operations.</li>
   <li>
-<strong>Commit frequently and make an honest effort to use commits as “versions”.</strong> While I had a relatively extensive theoretical knowledge of git from my school-year classes, this summer allowed me to put these skills into practice. Looking back on my previous commits, I found that there were many extraneous commits that made cosmetic changes (variable renaming for standardization) that could be grouped together in one commit. The opposite problem was also present: I saw different functional changes that were coalesced into one commit. Late in the internship, I started using <code class="language-plaintext highlighter-rouge">git commit --amend</code> to append small changes to previous commits to make the git history cleaner, and to commit more frequently for debugging versioning. Additionally, I started to use git tagging for identifying our testing and flight-ready versions of code. These changes greatly benefited my debugging process especially as the bugs I ran into became more complex as more systems were integrated together.</li>
+<strong>Commit frequently and make an honest effort to use commits as “versions”.</strong> While I had a theoretical knowledge of git from coursework, this summer allowed me to put these skills into practice. Looking back on my old commits, I found that there were many extraneous commits that made cosmetic changes (variable renaming for standardization) that could be grouped together in one commit. The opposite problem was also present: I saw different functional changes that were coalesced into one commit. Late in the internship, I started using <code class="language-plaintext highlighter-rouge">git commit --amend</code> to append small changes to previous commits to make the git history cleaner, and to commit more frequently for debugging versioning. Additionally, I started to use git tagging for identifying our testing and flight-ready versions of code. These changes greatly benefited my debugging process especially as the bugs I ran into became more complex as more systems were integrated together.</li>
   <li>
-<strong>Fewer assumptions can be made on embedded systems.</strong> Many issues I ran into while designing the filesystem had to do with memory handling and allocation. For example, I ran into strange corruption that I discovered was stack clobbering. It turns out that I statically allocated buffers of 4,200 bytes each at runtime on a microcontroller with a stack of only 8,192  bytes. While this issue was obvious in hindsight, it was not obvious to me as someone who was used to not having to think about stack sizes smaller than a MB on desktop or laptop computers.</li>
+<strong>Fewer assumptions can be made on embedded systems.</strong> I ran into many issues with memory handling and allocation while designing the filesystem. For example, I ran into strange corruption that I discovered was stack clobbering. It turns out that I statically allocated buffers of 4,200 bytes each at runtime on a microcontroller with a stack of only 8,192  bytes. While this issue was obvious in hindsight, it was not obvious to me at the time, since I  was used to having huge stack sizes on desktop or laptop computers.</li>
   <li>
-<strong>Integration is difficult.</strong> Maybe the biggest lesson in designing such interconnected systems was that integration tests will reveal many issues (timing, parsing, data handling) that are difficult to anticipate ahead of time. The takeaway here was to allocate significant amounts of time for integration testing and consider cutting down on your feature set in order to have the time to do complete integration tests.</li>
+<strong>Integration is difficult.</strong> Maybe the biggest lesson was that integration tests will often reveal many issues (timing, parsing, data handling) that are difficult to anticipate ahead of time. My takeaway was to allocate significant amounts of time for integration testing and consider cutting down on your feature set in order to have the time to do complete integration tests. Better to have an MVP working than to have multiple incomplete features and a non-functional product.</li>
 </ul>
 
 <h1 id="inspiration--references">Inspiration / References</h1>
@@ -573,7 +580,7 @@ erasing a block (“Block Erase”)</p>
     <!-- Footer -->    
     <footer class="fixed-bottom">
       <div class="container mt-0">
-        © Copyright 2025 Tai-Yu  Chen. 
+        © Copyright 2026 Tai-Yu  Chen. 
       </div>
     </footer>
 
