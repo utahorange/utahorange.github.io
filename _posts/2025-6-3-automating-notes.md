@@ -62,3 +62,6 @@ echo "Failed to delete files older than 3 days"
 
 }
 ```
+
+Update January 16, 2026:
+The day finally came to migrate to a local Obsidian vault and not use Google Drive anymore. I was adding and updating notes per usual in my Obsidian Vault when I noticed that search became inconsistent and slow (on the order of 5 s for some results to show up and even then it wasn't all results). I googled around a bit and realized that Google Drive Desktop (being a networked file share) starts to cache and not load all files when you get to a certain size. I'm not entirely sure what that limit was, but looking at my vault now, it's around 2.32 MB. 
