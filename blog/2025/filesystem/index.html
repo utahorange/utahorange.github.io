@@ -135,21 +135,21 @@
     <div id="markdown-content">
       <h1 id="introduction">Introduction</h1>
 
-<p>This summer I worked on a custom QSPI NAND flash driver and filesystem for an in-house PCB at UCLA’s <a href="https://elfin.igpp.ucla.edu/" rel="external nofollow noopener" target="_blank">Electron Loss Field Investigations Lab</a> (ELFIN). This was mainly to support the persistent storage of data products from another custom board as well as housekeeping data from the main board.</p>
+<p>This summer I worked on a custom QSPI NAND flash driver and filesystem for an in-house PCB at UCLA’s <a href="https://elfin.igpp.ucla.edu/" rel="external nofollow noopener" target="_blank">Electron Loss Field Investigations Lab</a> (ELFIN). This was mainly to support the persistent storage of data from another custom board as well as housekeeping data from the main board.</p>
 
 <blockquote>
   <p>In what I saw online, most developers tended to use someone else’s FTL (flash translation layer) with built-in wear leveling and page allocation for arbitrary reads and writes to flash. I was considering using <a href="https://github.com/dlbeer/dhara" rel="external nofollow noopener" target="_blank">dhara</a>, but I ended up not doing this.</p>
 </blockquote>
 
 <blockquote>
-  <p>While dhara and other FTL’s, or even filesystems like <a href="https://github.com/littlefs-project/littlefs" rel="external nofollow noopener" target="_blank">littlefs</a> are lightweight compared to Linux filesystems like Ext4 or Windows, for our custom PCB, they still imposed too much overhead, especially with our anticipated data rates. In addition to making our single-threaded microcontroller slower, overhead increases the board’s power consumption: a dire issue when on most space flights, the entire payload will be deeply power-constrained. It was instead more effective to implement a custom solution that stayed as close to NAND flash operations as possible.</p>
+  <p>While dhara and other FTL’s, or even filesystems like <a href="https://github.com/littlefs-project/littlefs" rel="external nofollow noopener" target="_blank">littlefs</a> are lightweight compared to Linux filesystems like Ext4 or Windows, for our custom PCB, they still imposed too much overhead, especially with our anticipated data rates. In addition to making our single-threaded microcontroller slower, more code ran increases the board’s power consumption: a dire issue when the payload of space flights will be deeply power-constrained. It was instead more effective to implement a custom solution that stayed as close to NAND flash operations as possible.</p>
 </blockquote>
 
-<p>The board I was working on is known as SDPI (Software-Defined Payload Interface), which is <a href="https://www.nasatechleap.org/news-updates/nasa-techleap-prize-announces-three-winners-of-universal-payload-interface-challenge" rel="external nofollow noopener" target="_blank">UCLA’s winning submission</a> to the <a href="https://www.upic.nasatechleap.org/" rel="external nofollow noopener" target="_blank">NASA Techleap Universal Payload Interface Challenge</a>. SDPI would fly on the ELVES weather balloon mission in New Mexico, which meant that the team had a hard deadline of September 2 to build and validate a working system, from data collection on board to analysis on the ground.</p>
+<p>The board I was working on is known as SDPI (Software-Defined Payload Interface), which is <a href="https://www.nasatechleap.org/news-updates/nasa-techleap-prize-announces-three-winners-of-universal-payload-interface-challenge" rel="external nofollow noopener" target="_blank">UCLA’s winning submission</a> to the <a href="https://www.upic.nasatechleap.org/" rel="external nofollow noopener" target="_blank">NASA Techleap Universal Payload Interface Challenge</a>. SDPI would fly on the ELVES weather balloon mission in New Mexico, which meant that we had a hard deadline of September 2 to build and validate a working system, from data collection on board to analysis on the ground.</p>
 
 <p>My task was to write a driver to interface with our four on-board NAND flash chips using QSPI and implement filesystems on top of the four flash chips to support storing, searching, and reading data packets from SDPI itself and from another board (FGM20) that would be connected to SDPI. The external flash (so-called because our microcontroller also had its own internal flash) would additionally store scripts and a superblock region.</p>
 
-<p>To support the filesystem on the ground side, I wrote endpoints and designed a transmission sequence to transfer data from filesystems back to a ground server, which stores it in a PostgreSQL database. The end goal was to verify the entire data pipeline, of data from another board to SDPI, into SDPI’s flash via the filesystem, and into the ground server database by a read request.</p>
+<p>To support the filesystem on the ground, I wrote endpoints and designed a transmission sequence to transfer data from filesystems back to a ground server, which stores it in a PostgreSQL database. The end goal was to verify the entire data pipeline, of data from another board to SDPI, into SDPI’s flash via the filesystem, and into the ground server database by a read request.</p>
 
 <h1 id="external-nand-flash">External NAND Flash</h1>
 
@@ -258,7 +258,7 @@
 <p>In general, the more costly NAND flash operations require a few cycles of polling status to ensure completion of the operation before proceeding with the function. Notably, block erase takes around five cycles of polling status, more than all other operations.</p>
 
 <h2 id="creating-the-virtual-flash-driver">Creating the “Virtual Flash” driver</h2>
-<p>Virtual flash is an abstraction on top of the QSPI NAND flash, simplifying the address across all 4 flash chips into two banks of addresses with linear, contiguous addressing and clean functions for other components of the whole SDPI codebase to use.</p>
+<p>Virtual flash is an abstraction on top of the QSPI NAND flash, organizing the addresses across all 4 flash chips into two banks of addresses with contiguous addressing and simple functions for other parts of the SDPI codebase to use.</p>
 
 <p>The important functionalities in the virtual flash driver were the following:</p>
 <ul>
@@ -267,13 +267,13 @@
   <li>writing a page</li>
 </ul>
 
-<p>To support these functionalities, a function to translate between physical flash addresses with a 24-bit row and 16-bit column addresses per flash chip to a single 32-bit virtual flash address. While the NAND flash uses 13 bits to address all the bytes in a page, the NAND flash page size is only 4352 bytes. This meant that the addressing was not continuous (2^13 is 8192; if you keep counting from the end of a page size at 4352, you would run into space that does not correspond to anywhere actually on the flash).</p>
+<p>To support these, I first wrote a function to translate between physical flash addresses (a pair of 24-bit row and 16-bit column addresses) per flash chip to a single 32-bit virtual flash address. While the NAND flash uses 13 bits to address all the bytes in a page, the NAND flash page size is only 4352 bytes. This meant that the addressing was not continuous (2^13 is 8192; if you keep counting from the end of a page size at 4352, you would run into space that does not correspond to anywhere actually on the flash).</p>
 
 <p>This is annoying for a clean and continuous address space, so I cut each page size down to 4096 (2^12) to get rid of this issue. Incrementing by hex <code class="language-plaintext highlighter-rouge">0x1000</code> gets you to the next page, and incrementing by hex <code class="language-plaintext highlighter-rouge">0x40000</code> gets you to the next block, though future developers shouldn’t have to think about block boundaries except in operations concerning erasing. In flash terminology, the extra space is typically known as the spare region, and it turns out having spare regions is not uncommon in NAND flash.</p>
 
-<p>Pages sizes of 4096 bytes are easy to operate on by virtue of being a power of 2. Instead of dividing or doing modulo on awkward sizes of 4352 to translate from virtual address to flash row and column addresses, bitmasks could now be used. Division and modulo operations take significantly more clock cycles than bitmasking, which was an important consideration considering how often addresses would be translated in normal flash operation.</p>
+<p>Pages sizes of 4096 bytes are easy to operate on by virtue of being a power of 2. Instead of dividing or doing modulo on awkward sizes of 4352 to translate from virtual address to flash row and column addresses, bitmasks could now be used. Division and modulo operations take significantly more clock cycles than bitmasking, which was an important consideration since addresses are translated in every flash operation.</p>
 
-<p>From this design, SDPI loses around 5.9% of our storage capacity, which for flash chips of 4 GB total capacity on an embedded device, felt like an acceptable loss, especially since SDPI would lose more when mirroring is implemented. Having the extra 256 bytes of space is not a bad thing. Early in the design process, my project manager suggested adding page metadata (such as when a packet ends in the page) or error correction bytes. While I did not yet implement this, I discovered the extra space is useful for an operation called filesystem recovery, which will be described later.</p>
+<p>With this design, SDPI loses around 5.9% of our storage capacity, which for flash chips of 4 GB total capacity on an embedded device, felt like an acceptable loss, especially since SDPI would lose more when mirroring is implemented. Having the extra 256-byte spare region is not a bad thing. Early in the design process, my project manager suggested adding page metadata (such as recodrding where a packet ends in the page) or error correction bytes. While I did not yet implement this, I discovered the extra space is useful for an operation called filesystem recovery, which will be described later.</p>
 
 <p>Another important aspect of the virtual flash driver was the function <code class="language-plaintext highlighter-rouge">erase_write</code>, intended to allow for arbitrary writes. Because of the peculiarities of NAND flash, arbitrary writes are complex and inefficient, but it was still important to expose a function to do this in order to support other functionalities of SDPI that used the external flash.</p>
 
@@ -293,7 +293,7 @@
 <p>The key issue of filesystem design was that SDPI receives data from other boards and itself (housekeeping packets) that are of varying sizes, none of which divide evenly into a page size. For example, SDPI housekeeping packets are 55 bytes, while most data packets from the FGM20 board are 19 bytes long. The naive solution would be to call the <code class="language-plaintext highlighter-rouge">erase_write</code> function every time the filesystem receives a packet. However, this approach would be highly inefficient, as it would require erasing and rewriting an entire block—278,528 bytes (4352 bytes × 64 pages)—for each incoming packet of only ~20 bytes. This would result in extreme write amplification, wasted bandwidth, and unnecessary wear on the flash memory.</p>
 
 <blockquote>
-  <p>These packets should be stored in the flash filesystem as fast as possible (with as little overhead as possible) because of our fast sample rates on our instruments (up to 128 sps for one kind of measurement, and 8 total types of data/housekeeping packets) which results in around 7 KB per s of data collection thrown at our single-threaded microcontroller. While the microcontroller is storing data in flash, it also should be able to respond to query and read requests, and other commands sent from a ground server in standard operation.</p>
+  <p>These packets should be stored in the flash filesystem as fast as possible (with as little overhead as possible) because of our fast sample rates on our instruments (up to 128 sps for one kind of measurement, and 8 total types of data/housekeeping packets) which is around 7 KB per s of data collection thrown at our single-threaded microcontroller. While the microcontroller is storing data in flash, it also should be able to respond to query and read requests, and other commands sent from a ground server in standard operation.</p>
 </blockquote>
 
 <p>The filesystem design imposes a few restrictions on where and how the data is stored. Instead of putting all data packets into one big filesystem with varying packet lengths, each packet type is given its own filesystem and defined regions of flash based on its sample rate (samples/packets per second).</p>
@@ -397,7 +397,7 @@
 
 </figure>
 
-<p>Backend begins by sending a query request to the SDPI board specifying which packet filesystem to look in and for what time range. When SDPI receives a query request, it immediately sends back an acknowledgement frame, essentially echoing the contents of the query it just received. This was done because the search for the first packet past the start_time could take a long time if the packet was very deep in the filesystem. It was determined more effective from the commanding point of view that we got immediate receipts for acknowledgement of query and read requests. After sending the ACK, SDPI searches for the first packet past start_time. If this is found, then it searches for the first packet past end_time, incrementing a count while doing so. Once this process completes, SDPI sends a query response containing the count of packets in this time range, the first packet’s timestamp, the last packet’s timestamp, and the head pointer of this filesystem for bookkeeping on the backend side.</p>
+<p>Backend begins the sequence by sending a query request to the SDPI board with which packet filesystem to look in and for what time range. When SDPI receives a query request, it immediately sends back an acknowledgement frame, echoing the contents of the query it just received. This was done because the search for the first packet past the <code class="language-plaintext highlighter-rouge">start_time</code> could take a long time if the packet was very deep in the filesystem. It was determined more effective from the commanding point of view that we got immediate receipts for acknowledgement of query and read requests. After sending the ACK, SDPI searches for the first packet past <code class="language-plaintext highlighter-rouge">start_time</code>. If this is found, then it searches for the first packet past <code class="language-plaintext highlighter-rouge">end_time</code>, incrementing a count while doing so. Once this process completes, SDPI sends a query response containing the count of packets in this time range, the first packet’s timestamp, the last packet’s timestamp, and the head pointer of this filesystem for bookkeeping on the backend side.</p>
 
 <p>A read request is somewhat similar but has to deal with actually transmitting the data of the filesystems. We cannot send the contents of an entire filesystem (possibly on the order of a hundred megabytes) in one frame and expect the whole transmission to be successful, so we divide the response to a read request into frames. When SDPI is actually in space, we expect to have high frame loss rates. On the ground server side then, we use whatever frames we do receive, along with additional data in special frames called “bookends” to reconstruct a bitmap of the filesystem we were looking at, so we know what packets we lost and what we need to re-downlink.</p>
 
@@ -425,15 +425,19 @@
 
 <p>Each data frame contains 20 data packets or whatever number of packets fits under roughly a KB (whatever comes first), as well as a packet ID at the beginning of the frame and a numerator (how many packets have been sent so far, including this data frame) at the end. The numerator is essential to the backend ground server because it allows it to order frames if they arrive out of order.</p>
 
-<p>I am grateful that for the ground backend server, I could rely on two of my co-workers to implement the actual details of the processing and data pipeline into the PostgreSQL database. To support their functionality, I added an additional field to my responses for query and reads to identify what kind of frame (acknowledgement, data frame, start or end bookend) a certain frame was. This was because the flight software team had not implemented multi-response commands prior to developing the filesystem pipeline, and thus this required a somewhat MacGyver solution to fit in with our current parsing functionality with minimal changes. A more robust command send and response framing architecture for cleaner parsing on both backend and SDPI side will be developed this fall.</p>
+<p>I am grateful that for the ground backend server, I could rely on two of my co-workers to implement the actual details of the processing and data pipeline into the PostgreSQL database. To support their functionality, I added an additional field to my responses for query and reads to identify what kind of frame (acknowledgement, data frame, start or end bookend) a certain frame was.</p>
+
+<p>This was because the flight software team had not implemented multi-response commands prior to developing the filesystem pipeline, and thus this required a somewhat MacGyver solution to fit in with our current parsing functionality with minimal changes. A more robust command send and response framing architecture for cleaner parsing on both backend and SDPI side will be developed this fall.</p>
 
 <h1 id="recovery-and-persistence-after-power-cycles">Recovery and Persistence after Power Cycles</h1>
 
-<p>One software-side goal was to make the system resilient to power cycles (power off then on) and allow it to continue storing data even after a power failure and restart. On the ELVES weather balloon mission, this was unlikely: SDPI would most likely not get power again after power loss. However, power cycles on satellites, which ELFIN intends to use SDPI on, are common, especially to recover from software faults, reset interrupts, or even reset hardware single event upsets (SEU’s).</p>
+<p>One attempted goal was to system resilient to power cycles and continue storing data even after a power failure and restart. On the ELVES weather balloon mission, this was unlikely: SDPI would most likely not get power again after power loss. However, power cycles on satellites, which ELFIN intends to use SDPI on, are common, especially to recover from software faults, reset interrupts, or even reset hardware single event upsets (SEU’s).</p>
 
 <p>A naive filesystem design with only the functionalities described previously runs into issues with storing data correctly after a power cycle. Notably, on startup after a power shutoff, each filesystem does not know where their respective filesystem head pointers and next page addresses are. This issue will be addressed in the superblock section.</p>
 
-<p>However, a separate issue is that you still have an incomplete packet at the end of your last written page. You do not know what the remaining bytes of that incomplete packet are because you lost the contents of every in-RAM filesystem buffer on the power cycle. If you append a packet directly onto the start of the next page, searches will no longer work on the filesystem, because incrementing from packets in the previous page to a new one will cause the timestamp check to be looking at the wrong bytes because of those missing bytes causing an offset.</p>
+<p>However, a separate issue is that you still have an incomplete packet at the end of your last written page. You do not know what the remaining bytes of that incomplete packet are because you lost the contents of every in-RAM filesystem buffer on the power cycle.</p>
+
+<p>If you append a packet directly onto the start of the next page, searches will no longer work on the filesystem, because incrementing from packets in the previous page to a new one will cause the timestamp check to now be misaligned by the missing bytes.</p>
 
 <p>The process to return the filesystem back to a state where more packets can be stored is termed recovery.</p>
 
@@ -445,7 +449,7 @@
   <li>Loading the contents of that erased page minus the contents of the incomplete packet on that page into in-RAM buffer for each filesystem.</li>
 </ol>
 
-<p>This, while in theory should have worked, turned out to be problematic since I hadn’t implemented superblocks properly at the time and was still running into issues of corruption with filesystem head pointer and next page address. Additionally, this meant losing a page’s worth of data every time I power-cycled the board if I did not store more data.</p>
+<p>This, while in theory should have worked, turned out to be problematic since I hadn’t implemented superblocks properly at the time and was still running into issues of corruption with filesystem head pointer and next page address. Additionally, this meant losing a page’s worth of data every time I power-cycled the board if I did not store more data 😟.</p>
 
 <p>After shipping a working version of SDPI code with no filesystem recovery for our actual flight (wouldn’t be able to store data post-power cycle but otherwise normal behavior after a filesystem wipe), I realized that SDPI could use the extra space in each page we lost from our addressing scheme. Virtual flash addresses only address the first 4096 bytes of each page, leaving 256 bytes out of the total 4352 bytes unused.</p>
 
@@ -546,7 +550,7 @@
   <li>
 <strong>Whiteboard / think about function flow before programming.</strong> Many of the features I had to implement this summer had numerous edge cases, often due to hardware limitations that were hard to observe without a cohesive picture of the larger system. This was especially true about the filesystem <code class="language-plaintext highlighter-rouge">store_packets</code> and updating pointers functionalities, and later on, the superblocks region. Before attempting to write any code, I often drew out the moving parts of the system and observed them functioning in the way I expected them to on a whiteboard to see potential problems and unexpected behavior.</li>
   <li>
-<strong>Be intentional with what you don’t include in your API.</strong> In the same vein as the lessons from the legendary blog Joel on Software, minimal and simple is best. I aimed to abstract as much of the hardware-specific NAND flash details as I could and hide them under the virtual flash driver to expose as minimal a function set as I could. These choices helped me later on when writing filesystem functions, by restricting the possible functions I could use, forcing me to unwittingly optimize for fewer NAND flash operations.</li>
+<strong>Be intentional with what you don’t include in your API.</strong> In the same vein as the lessons from the legendary blog <a href="https://www.joelonsoftware.com/" rel="external nofollow noopener" target="_blank">Joel on Software</a>, minimal and simple is best. I aimed to abstract as much of the hardware-specific NAND flash details as I could and hide them under the virtual flash driver to expose as minimal a function set as I could. These choices helped me later on when writing filesystem functions, by restricting the possible functions I could use, forcing me to unwittingly optimize for fewer NAND flash operations.</li>
   <li>
 <strong>Commit frequently and make an honest effort to use commits as “versions”.</strong> While I had a theoretical knowledge of git from coursework, this summer allowed me to put these skills into practice. Looking back on my old commits, I found that there were many extraneous commits that made cosmetic changes (variable renaming for standardization) that could be grouped together in one commit. The opposite problem was also present: I saw different functional changes that were coalesced into one commit. Late in the internship, I started using <code class="language-plaintext highlighter-rouge">git commit --amend</code> to append small changes to previous commits to make the git history cleaner, and to commit more frequently for debugging versioning. Additionally, I started to use git tagging for identifying our testing and flight-ready versions of code. These changes greatly benefited my debugging process especially as the bugs I ran into became more complex as more systems were integrated together.</li>
   <li>
@@ -568,7 +572,7 @@
 <a href="https://www.youtube.com/watch?v=KdTcd94pVlY&amp;ab_channel=media.ccc.de" rel="external nofollow noopener" target="_blank">“Hacking yourself a Satellite”</a> is a classic, but still legendary to me. It’s super cool to me that the old ELFIN team at UCLA did something similar (code injection) in order to upgrade the capabilities of the twin ELFIN satellites during their 4-year mission.</li>
 </ul>
 
-<p>This article was kind of a word barf of everything technical that happened over my summer. Thanks for making it this far! Hope you found this read enjoyable.</p>
+<p>This article was kind of a word barf of everything technical that happened over my summer. Thanks for making it this far! Feel free to reach out at my email if you have any corrections, thoughts, or suggestions for this system.</p>
 
     </div>
   </article>
@@ -622,12 +626,12 @@
   <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NNTX8ZBGX7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ window.dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', '');
+    gtag('config', 'G-NNTX8ZBGX7');
   </script>
     
 
