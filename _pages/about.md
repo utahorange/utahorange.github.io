@@ -16,10 +16,10 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-I’m currently a computer science major at [UCLA](https://www.ucla.edu/). My interests are mostly in performance and security for systems, whether that be distributed ML or embedded. In another life, I would've been an architect.
+I’m currently a computer engineering major + math minor at [UCLA](https://www.ucla.edu/). My interests are mostly in performance and security for systems, whether that be distributed ML or embedded. In another life, I would've been an architect.
 
-This summer, I worked at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/) and wrote a [filesystem](https://utahorange.github.io/blog/2025/filesystem/) that flew on a NASA-funded weather balloon. This quarter I'm focusing on redesigning our commanding architecture and data pipeline to be more performant and extensible for future CubeSat missions. 
+The past summer, I worked on the communications system making planes autonomous at [Reliable Robotics](https://reliable.co/). Before the summer, I took a quarter off from school to work on authentication for satellite-based telecom at [Starlink Mobile](https://starlink.com/fr/business/mobile).
 
-I'm also working on projects with big tech like [AWS](https://aws.amazon.com/) for the greater UCLA community as a member of [Bruin AI](https://bruinai.org/). 
+...And before that, I was at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/) where I wrote a [filesystem](https://utahorange.github.io/blog/2025/filesystem/) that flew on a NASA-funded weather balloon. 
 
 In my free time I like to read, watch movies, and daydream about going rock climbing. Feel free to reach out at my email.
