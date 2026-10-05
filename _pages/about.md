@@ -20,6 +20,6 @@ I’m currently a computer engineering major + math minor at [UCLA](https://www.
 
 The past summer, I worked on the communications system making planes autonomous at [Reliable Robotics](https://reliable.co/). Before the summer, I took a quarter off from school to work on authentication for satellite-based telecom at [Starlink Mobile](https://starlink.com/fr/business/mobile).
 
-...And before that, I was at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/) where I wrote a [filesystem](https://utahorange.github.io/blog/2025/filesystem/) that flew on a NASA-funded weather balloon. 
+...And before that, I was at UCLA's [ELFIN Lab](https://elfin.igpp.ucla.edu/) where I wrote a [filesystem](https://utahorange.github.io/blog/2025/filesystem/) that flew on a [NASA-funded weather balloon](https://elfin.igpp.ucla.edu/elves).
 
 In my free time I like to read, watch movies, and daydream about going rock climbing. Feel free to reach out at my email.
